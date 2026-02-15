@@ -10,6 +10,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\SimilarReflectionsController;
 use App\Http\Middleware\EnsureOnboardingComplete;
 
 Route::get('/', function () {
@@ -53,6 +54,8 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
 
     Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
     Route::get('comments', [CommentController::class, 'index'])->name('comments.index');
+
+    Route::get('events/{event}/similar', [SimilarReflectionsController::class, 'index'])->name('events.similar');
 
     Route::get('community', [EventController::class, 'community'])->name('community');
 });
