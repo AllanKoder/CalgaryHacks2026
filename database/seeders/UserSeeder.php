@@ -45,12 +45,19 @@ class UserSeeder extends Seeder
                 ]
             );
 
-            $values = [52, 55, 60, 66, 62, 74, 80];
+            $values = [
+                52, 53, 54, 55, 54, 56, 57, 58,
+                59, 58, 60, 61, 62, 60, 63, 64,
+                65, 63, 66, 68, 67, 69, 71, 70,
+            ];
             $rows = [];
-            $start = Carbon::now('UTC')->subWeeks(count($values) - 1)->startOfDay();
+            $intervalDays = 3;
+            $start = Carbon::now('UTC')
+                ->subDays((count($values) - 1) * $intervalDays)
+                ->startOfDay();
 
             foreach ($values as $index => $value) {
-                $recordedAt = $start->copy()->addWeeks($index);
+                $recordedAt = $start->copy()->addDays($index * $intervalDays);
                 $delta = $index === 0 ? 0 : $value - $values[$index - 1];
 
                 $rows[] = [
