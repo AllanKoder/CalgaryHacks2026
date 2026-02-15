@@ -46,7 +46,7 @@ class IdentificationController extends Controller
             'pattern_recognition.personal_or_organizational' => 'nullable|string',
             'pattern_recognition.common_thread' => 'nullable|string',
         ]);
-        
+
         // Auto-generate tag from sub_category if not provided
         if (empty($validated['tag'])) {
             $validated['tag'] = $validated['sub_category'];
@@ -96,7 +96,7 @@ class IdentificationController extends Controller
             'pattern_recognition.personal_or_organizational' => 'nullable|string',
             'pattern_recognition.common_thread' => 'nullable|string',
         ]);
-        
+
         // Auto-generate tag from sub_category if not provided
         if (empty($validated['tag'])) {
             $validated['tag'] = $validated['sub_category'];

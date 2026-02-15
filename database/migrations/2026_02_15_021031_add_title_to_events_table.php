@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('events', function (Blueprint $table) {
             $table->string('title')->nullable()->after('user_id');
+            $table->string('context');
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('events', function (Blueprint $table) {
             $table->dropColumn('title');
+            $table->dropColumn('context');
         });
     }
 };

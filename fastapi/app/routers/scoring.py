@@ -14,10 +14,6 @@ from app.scoring_update import (
 
 router = APIRouter(prefix="/scoring", tags=["scoring"])
 
-# -----------------------------------------------------------------------------
-# Request Models
-# -----------------------------------------------------------------------------
-
 
 class QuizSubmission(BaseModel):
     # Mapping of question_id (str) -> answer index (int)
@@ -26,17 +22,9 @@ class QuizSubmission(BaseModel):
 
 class UpdateScoreRequest(BaseModel):
     user_scores: UserScores
-    # We accept the raw fields for AIAnalysisResult and reconstruct it manually
-    # because Pydantic might struggle to map a string back to the correct SubLabel Enum member
-    # without extra configuration given the multiple Enum classes.
     ai_sublabel_value: str
     ai_is_improvement: bool
     ai_magnitude: float
-
-
-# -----------------------------------------------------------------------------
-# Helpers
-# -----------------------------------------------------------------------------
 
 
 def _find_sublabel_enum_member(value: str) -> SubLabelBase:
@@ -49,11 +37,6 @@ def _find_sublabel_enum_member(value: str) -> SubLabelBase:
             if member._value_ == value:
                 return member
     raise ValueError(f"Unknown sub-label value: {value}")
-
-
-# -----------------------------------------------------------------------------
-# Endpoints
-# -----------------------------------------------------------------------------
 
 
 @router.post("/init-quiz", response_model=UserScores)

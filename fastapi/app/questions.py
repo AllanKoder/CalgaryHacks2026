@@ -7,9 +7,7 @@ from app.data.quiz import QuizQuestion, QuizQuestionType
 from app.label import Label
 
 QUIZ_QUESTIONS: list[QuizQuestion] = [
-    # ──────────────────────────────────────────
-    # EMOTIONAL MASTERY (4 questions)
-    # ──────────────────────────────────────────
+    # EMOTIONAL MASTERY
     QuizQuestion(
         question_id="em_1",
         label=Label.EMOTIONAL_MASTERY,
@@ -49,9 +47,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I recover from emotional setbacks (bad news, arguments, disappointments) within a reasonable time.",
         inverted=False,
     ),
-    # ──────────────────────────────────────────
-    # COGNITIVE CLARITY (4 questions)
-    # ──────────────────────────────────────────
     QuizQuestion(
         question_id="cc_1",
         label=Label.COGNITIVE_CLARITY,
@@ -85,9 +80,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I tend to assume the worst-case outcome when facing uncertainty.",
         inverted=True,
     ),
-    # ──────────────────────────────────────────
-    # SOCIAL & RELATIONAL (4 questions)
-    # ──────────────────────────────────────────
     QuizQuestion(
         question_id="sr_1",
         label=Label.SOCIAL_RELATIONAL,
@@ -121,9 +113,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I can express my needs clearly in relationships without starting a fight.",
         inverted=False,
     ),
-    # ──────────────────────────────────────────
-    # ETHICAL & MORAL (4 questions)
-    # ──────────────────────────────────────────
     QuizQuestion(
         question_id="etm_1",
         label=Label.ETHICAL_MORAL,
@@ -157,9 +146,7 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I sometimes hold others to standards that I don't follow myself.",
         inverted=True,
     ),
-    # ──────────────────────────────────────────
     # PHYSICAL & LIFESTYLE (4 questions)
-    # ──────────────────────────────────────────
     QuizQuestion(
         question_id="pl_1",
         label=Label.PHYSICAL_LIFESTYLE,
@@ -196,9 +183,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I manage my money responsibly — I know what I spend and save regularly.",
         inverted=False,
     ),
-    # ──────────────────────────────────────────
-    # IDENTITY & GROWTH (4 questions)
-    # ──────────────────────────────────────────
     QuizQuestion(
         question_id="ig_1",
         label=Label.IDENTITY_GROWTH,

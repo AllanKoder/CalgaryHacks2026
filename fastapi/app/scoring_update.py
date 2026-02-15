@@ -37,9 +37,6 @@ LABEL_TO_SUBLABEL_ENUM: dict[Label, type[SubLabelBase]] = {
 }
 
 
-# ──────────────────────────────────────────────
-# HELPERS
-# ──────────────────────────────────────────────
 def _clamp(value: float) -> float:
     return max(MIN_SCORE, min(MAX_SCORE, value))
 
@@ -56,7 +53,7 @@ def _compute_overall_score(user: UserScores) -> float:
     Single number representing the user's state across all 78 sub-labels.
     Severity-weighted average of every sub-label score.
 
-    Formula: Σ(score_i × severity_i) / Σ(severity_i)
+    Formula: Sumation(score_i × severity_i) / Sumation(severity_i)
     """
     weighted_sum = 0.0
     total_weight = 0.0
@@ -71,20 +68,12 @@ def _compute_overall_score(user: UserScores) -> float:
     return round(weighted_sum / total_weight, 2) if total_weight > 0 else DEFAULT_SCORE
 
 
-# ══════════════════════════════════════════════
-# 1. QUIZ INITIALIZATION
-# ══════════════════════════════════════════════
-
-
 async def initialize_from_quiz(
     user: UserScores,
     questions: list[QuizQuestion],
     answers: dict[str, int],
 ) -> UserScores:
-    """
-    Updates label_scores for the Spider Chart
-    and line_chart_history for the Line Graph.
-    """
+    """ """
     # 1. Group scores by Label (Category)
     # We create a list of scores for each of the 6 labels
     label_buckets: dict[Label, list[float]] = {label: [] for label in Label}
@@ -138,76 +127,6 @@ async def initialize_from_quiz(
     return user
 
 
-# async def initialize_from_quiz(
-#     user: UserScores,
-#     questions: list[QuizQuestion],
-#     answers: dict[str, int],
-# ) -> UserScores:
-#     """
-#     Called once on first login after the user completes the 24-question quiz.
-
-#     - Converts 24 answers into 6 label scores (4 questions per label, averaged).
-#     - Sets the spider chart baseline.
-#     - Records the first line chart data point (delta = 0 since it's the starting point).
-#     - Sub-label scores remain unset — they inherit the parent label score until
-#       the AI classifies specific events.
-
-#     Args:
-#         user: Fresh UserScores instance.
-#         questions: The 24 quiz questions.
-#         answers: Map of question_id → answer (0-based index for scenarios, 1-5 for scales).
-
-#     Returns:
-#         Updated UserScores with initial label scores and first line chart point.
-#     """
-#     label_buckets: dict[Label, list[float]] = {label: [] for label in Label}
-
-#     for question in questions:
-#         if question.question_id not in answers:
-#             continue
-
-#         answer = answers[question.question_id]
-
-#         if question.question_type == QuizQuestionType.SCENARIO:
-#             if question.options is None:
-#                 raise ValueError(
-#                     f"Scenario question {question.question_id} has no options"
-#                 )
-#             score = question.options[answer][1]
-
-#         else:
-#             # AGREE_DISAGREE or SELF_RATING: answer is 1-5
-#             if question.inverted:
-#                 score = (5 - answer) / 4 * 100
-#             else:
-#                 score = (answer - 1) / 4 * 100
-
-#         label_buckets[question.label].append(score)
-
-#     # Average per label
-#     for label, scores in label_buckets.items():
-#         user.label_scores[label] = round(
-#             sum(scores) / len(scores) if scores else DEFAULT_SCORE, 1
-#         )
-
-#     user.initial_report = await generate_quiz_analysis_ai_service(questions, answers)
-
-#     # First line chart point — baseline, delta is 0
-#     overall = _compute_overall_score(user)
-#     user.line_chart_history.append(
-#         LineChartPoint(
-#             timestamp=datetime.now(timezone.utc),
-#             overall_score=overall,
-#             delta=0.0,
-#         )
-#     )
-
-#     return user
-
-
-# ══════════════════════════════════════════════
-# 2. UPDATE SUB-LABEL SCORE (LINE CHART)
-# ══════════════════════════════════════════════
 def update_sublabel_from_ai(
     user: UserScores,
     analysis: AIAnalysisResult,
@@ -262,9 +181,6 @@ def update_sublabel_from_ai(
     return user
 
 
-# ══════════════════════════════════════════════
-# 3. UPDATE LABEL SCORE (SPIDER CHART)
-# ══════════════════════════════════════════════
 def update_label_from_ai(
     user: UserScores,
     label: Label,
@@ -273,7 +189,7 @@ def update_label_from_ai(
     Recalculates a single label's spider chart score from its sub-label scores.
 
     Formula:
-        label_score = Σ(sublabel_score_i × severity_i) / Σ(severity_i)
+        label_score = Sumation(sublabel_score_i × severity_i) / Sumation(severity_i)
 
     High-severity sub-labels have more pull on the label score. Sub-labels that
     haven't been directly assessed yet fall back to the quiz baseline.
@@ -304,17 +220,14 @@ def update_label_from_ai(
     return user
 
 
-# ══════════════════════════════════════════════
-# CONVENIENCE: FULL UPDATE PIPELINE
-# ══════════════════════════════════════════════
 def process_ai_analysis(
     user: UserScores,
     analysis: AIAnalysisResult,
 ) -> UserScores:
     """
     Single entry point that does both updates in order:
-      1. Updates the sub-label score → new line chart point
-      2. Recalculates the parent label score → spider chart update
+      1. Updates the sub-label score -> new line chart point
+      2. Recalculates the parent label score -> spider chart update
 
     Use this instead of calling update_sublabel_from_ai + update_label_from_ai separately.
     """
@@ -323,9 +236,6 @@ def process_ai_analysis(
     return user
 
 
-# ══════════════════════════════════════════════
-# GETTERS FOR FRONTEND
-# ══════════════════════════════════════════════
 def get_spider_chart_data(user: UserScores) -> dict[str, float]:
     """Returns {label_name: score} for rendering the spider chart."""
     return {label.value: score for label, score in user.label_scores.items()}
