@@ -68,7 +68,7 @@ def _compute_overall_score(user: UserScores) -> float:
     return round(weighted_sum / total_weight, 2) if total_weight > 0 else DEFAULT_SCORE
 
 
-async def initialize_from_quiz(
+def initialize_from_quiz(
     user: UserScores,
     questions: list[QuizQuestion],
     answers: dict[str, int],
@@ -109,7 +109,7 @@ async def initialize_from_quiz(
 
     # 3. Generate the Gemini Report
     # We do this before the line chart so the user gets everything at once
-    user.initial_report = await generate_quiz_analysis_ai_service(questions, answers)
+    # user.initial_report = await generate_quiz_analysis_ai_service(questions, answers)
 
     # 4. Update Line Graph Data (line_chart_history)
     # _compute_overall_score uses the label_scores we just calculated
