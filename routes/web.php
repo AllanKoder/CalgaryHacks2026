@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
     Route::get('dashboard', function (Request $request) {
         $user = $request->user();
         $userData = $user?->userData;
+        $diagnosticSummary = null;
         $lineChartHistory = $user?->scoreHistory()
             ->orderBy('recorded_at')
             ->get(['recorded_at', 'overall_score', 'delta'])
@@ -34,6 +35,19 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
             ->values()
             ->all();
         $metricDeltas = [];
+
+        if ($user) {
+            $latestDiagnostic = $user->diagnosticResults()
+                ->orderByDesc('created_at')
+                ->first();
+
+            if ($latestDiagnostic && is_array($latestDiagnostic->summary) && $latestDiagnostic->summary !== []) {
+                $diagnosticSummary = [
+                    'summary' => $latestDiagnostic->summary,
+                    'created_at' => $latestDiagnostic->created_at?->toIso8601String(),
+                ];
+            }
+        }
 
         if ($user) {
             $history = $user->labelHistory()
@@ -55,11 +69,22 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
                 }
             }
 
-            foreach ($latestByLabel as $label => $latestScore) {
-                $previousScore = $previousByLabel[$label] ?? $latestScore;
-                $metricDeltas[$label] = round($latestScore - $previousScore, 1);
-            }
+        $labelKeyMap = [
+            'emotional_mastery' => 'emotionalMastery',
+            'cognitive_clarity' => 'cognitiveClarity',
+            'social_relational' => 'socialRelational',
+            'ethical_moral' => 'ethicalMoral',
+            'physical_lifestyle' => 'physicalLifestyle',
+            'physical_health' => 'physicalLifestyle',
+            'identity_growth' => 'identityGrowth',
+        ];
+
+        foreach ($latestByLabel as $label => $latestScore) {
+            $previousScore = $previousByLabel[$label] ?? $latestScore;
+            $mappedKey = $labelKeyMap[$label] ?? $label;
+            $metricDeltas[$mappedKey] = round($latestScore - $previousScore, 1);
         }
+    }
 
         return Inertia::render('dashboard', [
             'userData' => $userData
@@ -74,6 +99,7 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
                 : null,
             'lineChartHistory' => $lineChartHistory,
             'metricDeltas' => $metricDeltas,
+            'diagnosticSummary' => $diagnosticSummary,
         ]);
     })->name('dashboard');
 

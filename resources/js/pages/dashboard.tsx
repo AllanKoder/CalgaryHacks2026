@@ -23,6 +23,16 @@ type DashboardPageProps = {
         delta: number;
     }[] | null;
     metricDeltas?: Record<string, number>;
+    diagnosticSummary?: {
+        summary: {
+            overall_assessment?: string;
+            key_insights?: string[];
+            primary_concerns?: string[];
+            strengths_identified?: string[];
+            recommended_focus?: string;
+        };
+        created_at?: string | null;
+    } | null;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -101,6 +111,7 @@ export default function Dashboard({
     userData,
     lineChartHistory,
     metricDeltas = {},
+    diagnosticSummary,
 }: DashboardPageProps) {
     const radarMetrics = userData
         ? [
@@ -159,15 +170,52 @@ export default function Dashboard({
     const topMetric = sortedMetrics[0];
     const secondMetric = sortedMetrics[1];
 
-    const quickReview = {
+    const summary = diagnosticSummary?.summary;
+    const summaryDate = diagnosticSummary?.created_at
+        ? new Date(diagnosticSummary.created_at).toLocaleDateString()
+        : null;
+    const summarySubtitle = summaryDate
+        ? `Latest AI review • ${summaryDate}`
+        : 'Latest AI review';
+    const summaryItems = summary
+        ? [
+              {
+                  metric: 'Overall Assessment',
+                  content: summary.overall_assessment,
+              },
+              {
+                  metric: 'Recommended Focus',
+                  content: summary.recommended_focus,
+              },
+              {
+                  metric: 'Key Insights',
+                  content: summary.key_insights?.length
+                      ? summary.key_insights.join(' • ')
+                      : undefined,
+              },
+              {
+                  metric: 'Primary Concerns',
+                  content: summary.primary_concerns?.length
+                      ? summary.primary_concerns.join(' • ')
+                      : undefined,
+              },
+              {
+                  metric: 'Strengths Identified',
+                  content: summary.strengths_identified?.length
+                      ? summary.strengths_identified.join(' • ')
+                      : undefined,
+              },
+          ].filter((item) => !!item.content)
+        : [];
+
+    const fallbackPrimary = {
         metric: topMetric.label,
         subtitle: 'Your strongest signal right now. Keep reinforcing the habits behind it.',
         dialogTitle: `Quick Review: ${topMetric.label}`,
         review:
             'You are consistently scoring higher in this domain compared to the rest of your profile. The last stretch of updates shows steady improvement with fewer regressions. Keep the same routine that produced these gains and look for one small experiment this week to maintain momentum.',
     };
-
-    const secondaryReview = secondMetric
+    const fallbackSecondary = secondMetric
         ? {
               metric: secondMetric.label,
               subtitle: 'A close second. Focus here to round out your profile.',
@@ -176,6 +224,26 @@ export default function Dashboard({
                   'This area is trending upward but still has a few dips. Pick one consistent micro-habit and track it for a week to stabilize gains and avoid regression.',
           }
         : undefined;
+
+    const quickReview =
+        summaryItems.length > 0
+            ? {
+                  metric: summaryItems[0].metric,
+                  subtitle: summarySubtitle,
+                  dialogTitle: summaryItems[0].metric,
+                  review: summaryItems[0].content ?? '',
+              }
+            : fallbackPrimary;
+
+    const secondaryReview =
+        summaryItems.length > 1
+            ? {
+                  metric: summaryItems[1].metric,
+                  subtitle: summarySubtitle,
+                  dialogTitle: summaryItems[1].metric,
+                  review: summaryItems[1].content ?? '',
+              }
+            : fallbackSecondary;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
