@@ -6,6 +6,7 @@ import {
     home,
     login,
     logout,
+    questionnaire,
     register,
 } from '@/routes';
 import events from '@/routes/events';
@@ -17,6 +18,7 @@ export {
     home,
     login,
     logout,
+    questionnaire,
     register,
     events,
 };

@@ -17,4 +17,9 @@ class FastApiClient
     {
         return Http::timeout($timeout)->post($this->base . '/predict', $payload);
     }
+
+    public function questions($timeout = 5)
+    {
+        return Http::timeout($timeout)->get($this->base . '/questions');
+    }
 }

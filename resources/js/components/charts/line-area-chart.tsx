@@ -1,11 +1,14 @@
 import { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
+type LineAreaChartData = number[] | Record<string, number>;
+
 type LineAreaChartProps = {
-    data: number[];
+    data: LineAreaChartData;
     labels?: string[];
     height?: number;
     width?: number;
+    curve?: 'smooth' | 'linear';
     className?: string;
 };
 
@@ -17,33 +20,85 @@ type Point = {
 export function LineAreaChart({
     data,
     labels = [],
-    height = 180,
+    height = 190,
     width = 520,
+    curve = 'smooth',
     className,
 }: LineAreaChartProps) {
-    const padding = 22;
+    const padding = 26;
+
+    const { values, displayLabels } = useMemo(() => {
+        if (Array.isArray(data)) {
+            return { values: data, displayLabels: labels };
+        }
+
+        const entries = Object.entries(data);
+        entries.sort(([dateA], [dateB]) => {
+            const timeA = new Date(dateA).getTime();
+            const timeB = new Date(dateB).getTime();
+            if (Number.isNaN(timeA) || Number.isNaN(timeB)) {
+                return dateA.localeCompare(dateB);
+            }
+            return timeA - timeB;
+        });
+
+        return {
+            values: entries.map(([, value]) => value),
+            displayLabels: entries.map((_, index) => `Week ${index + 1}`),
+        };
+    }, [data, labels]);
+
     const minValue = 0;
-    const maxValue = Math.max(100, ...data);
+    const maxValue = Math.max(100, ...values);
 
     const points = useMemo(() => {
-        if (data.length === 0) {
+        if (values.length === 0) {
             return [];
         }
 
-        return data.map((value, index) => {
+        return values.map((value, index) => {
             const x =
                 padding +
-                ((width - padding * 2) * index) / Math.max(1, data.length - 1);
+                ((width - padding * 2) * index) /
+                    Math.max(1, values.length - 1);
             const ratio =
                 (value - minValue) / Math.max(1, maxValue - minValue);
             const y = height - padding - ratio * (height - padding * 2);
             return { x, y };
         });
-    }, [data, height, maxValue, minValue, padding, width]);
+    }, [height, maxValue, minValue, padding, values, width]);
+
+    const smoothPath = useMemo(() => {
+        if (points.length === 0) {
+            return '';
+        }
+
+        const tension = 0.4;
+        const path = points.reduce((acc, point, index, arr) => {
+            if (index === 0) {
+                return `M ${point.x} ${point.y}`;
+            }
+
+            const prev = arr[index - 1];
+            const next = arr[index + 1] ?? point;
+            const cp1x = prev.x + (point.x - prev.x) * tension;
+            const cp1y = prev.y + (point.y - prev.y) * tension;
+            const cp2x = point.x - (next.x - prev.x) * tension;
+            const cp2y = point.y - (next.y - prev.y) * tension;
+
+            return `${acc} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${point.x} ${point.y}`;
+        }, '');
+
+        return path;
+    }, [points]);
 
     const linePath = useMemo(() => {
         if (points.length === 0) {
             return '';
+        }
+
+        if (curve === 'smooth') {
+            return smoothPath;
         }
 
         return points
@@ -53,7 +108,7 @@ export function LineAreaChart({
                     : `L ${point.x} ${point.y}`,
             )
             .join(' ');
-    }, [points]);
+    }, [curve, points, smoothPath]);
 
     const areaPath = useMemo(() => {
         if (points.length === 0) {
@@ -85,7 +140,7 @@ export function LineAreaChart({
                         <stop
                             offset="0%"
                             stopColor="var(--color-chart-1)"
-                            stopOpacity="0.35"
+                            stopOpacity="0.32"
                         />
                         <stop
                             offset="100%"
@@ -100,15 +155,24 @@ export function LineAreaChart({
                         y1="0"
                         y2="0"
                     >
-                        <stop
-                            offset="0%"
-                            stopColor="var(--color-chart-1)"
-                        />
-                        <stop
-                            offset="100%"
-                            stopColor="var(--color-chart-2)"
-                        />
+                        <stop offset="0%" stopColor="var(--color-chart-1)" />
+                        <stop offset="100%" stopColor="var(--color-chart-2)" />
                     </linearGradient>
+                    <filter
+                        id="line-glow"
+                        x="-30%"
+                        y="-30%"
+                        width="160%"
+                        height="160%"
+                    >
+                        <feDropShadow
+                            dx="0"
+                            dy="6"
+                            stdDeviation="8"
+                            floodColor="var(--color-chart-1)"
+                            floodOpacity="0.2"
+                        />
+                    </filter>
                 </defs>
 
                 {[0.25, 0.5, 0.75].map((ratio) => {
@@ -123,11 +187,20 @@ export function LineAreaChart({
                             y2={y}
                             stroke="var(--color-border)"
                             strokeDasharray="4 6"
-                            strokeOpacity="0.6"
+                            strokeOpacity="0.45"
                         />
                     );
                 })}
 
+                <path
+                    d={linePath}
+                    fill="none"
+                    stroke="var(--color-chart-1)"
+                    strokeWidth="6"
+                    strokeOpacity="0.08"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
                 <path
                     d={areaPath}
                     fill="url(#line-area-gradient)"
@@ -137,9 +210,10 @@ export function LineAreaChart({
                     d={linePath}
                     fill="none"
                     stroke="url(#line-stroke-gradient)"
-                    strokeWidth="3"
+                    strokeWidth="2.75"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    filter="url(#line-glow)"
                 />
 
                 {points.map((point, index) => (
@@ -147,22 +221,22 @@ export function LineAreaChart({
                         key={`point-${index}`}
                         cx={point.x}
                         cy={point.y}
-                        r="4"
+                        r="2.6"
                         fill="var(--color-background)"
                         stroke="var(--color-chart-1)"
-                        strokeWidth="2"
+                        strokeWidth="1.5"
                     />
                 ))}
             </svg>
 
-            {labels.length > 0 && (
+            {displayLabels.length > 0 && (
                 <div
-                    className="mt-3 grid gap-2 text-xs text-muted-foreground"
+                    className="mt-3 grid gap-2 text-[11px] text-muted-foreground/80"
                     style={{
-                        gridTemplateColumns: `repeat(${labels.length}, minmax(0, 1fr))`,
+                        gridTemplateColumns: `repeat(${displayLabels.length}, minmax(0, 1fr))`,
                     }}
                 >
-                    {labels.map((label) => (
+                    {displayLabels.map((label) => (
                         <span key={label} className="text-center">
                             {label}
                         </span>

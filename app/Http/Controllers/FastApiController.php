@@ -31,4 +31,22 @@ class FastApiController extends Controller
             'info' => $info,
         ]);
     }
+
+    public function questionnaire(FastApiClient $client)
+    {
+        $questions = [];
+
+        try {
+            $resp = $client->questions();
+            if ($resp->ok()) {
+                $questions = $resp->json('questions') ?? $resp->json() ?? [];
+            }
+        } catch (\Exception $e) {
+            $questions = [];
+        }
+
+        return Inertia::render('questionnaire', [
+            'questions' => $questions,
+        ]);
+    }
 }

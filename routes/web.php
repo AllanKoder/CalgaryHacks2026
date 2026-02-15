@@ -42,6 +42,10 @@ Route::get('community', function () {
     return Inertia::render('community');
 })->middleware(['auth', 'verified'])->name('community');
 
+Route::get('questionnaire', [FastApiController::class, 'questionnaire'])
+    ->middleware(['auth', 'verified'])
+    ->name('questionnaire');
+
 Route::get('/fastapi-test', [FastApiController::class, 'info'])->name('fastapi.test');
 
 require __DIR__ . '/settings.php';
