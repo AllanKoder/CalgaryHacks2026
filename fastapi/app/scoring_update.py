@@ -79,7 +79,6 @@ def initialize_from_quiz(user: UserScores,questions: list[QuizQuestion],answers:
             score = question.options[answer_value][1]
         else:
             # For AGREE_DISAGREE / SELF_RATING (1-5 scale)
-            # Normalize 1-5 to 0-100
             if question.inverted:
                 score = (5 - answer_value) / 4 * 100
             else:
@@ -104,7 +103,6 @@ def initialize_from_quiz(user: UserScores,questions: list[QuizQuestion],answers:
     )
 
     return user
-
 
 def update_sublabel_from_ai( user: UserScores, analysis: AIAnalysisResult) -> UserScores:
     sublabel = analysis.sublabel
