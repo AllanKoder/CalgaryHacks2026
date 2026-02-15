@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use App\Models\UserData;
 use App\Models\UserScoreHistory;
+use App\Models\UserLabelHistory;
 
 class User extends Authenticatable
 {
@@ -71,5 +72,10 @@ class User extends Authenticatable
     public function scoreHistory()
     {
         return $this->hasMany(UserScoreHistory::class);
+    }
+
+    public function labelHistory()
+    {
+        return $this->hasMany(UserLabelHistory::class);
     }
 }

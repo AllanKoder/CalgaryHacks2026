@@ -22,6 +22,7 @@ type DashboardPageProps = {
         overall_score: number;
         delta: number;
     }[] | null;
+    metricDeltas?: Record<string, number>;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -50,47 +51,47 @@ const fallbackRadarMetrics = [
     { label: 'Identity & Growth', value: 60 },
 ];
 
-const kpis: KpiItem[] = [
+const fallbackKpis: KpiItem[] = [
     {
         title: 'Emotional Mastery',
-        value: '63%',
+        value: '63',
         score: 63,
-        change: '+5%',
+        change: '+13',
         trend: 'up',
     },
     {
         title: 'Cognitive Clarity',
-        value: '58%',
+        value: '58',
         score: 58,
-        change: '+2%',
+        change: '+8',
         trend: 'up',
     },
     {
         title: 'Social & Relational',
-        value: '71%',
+        value: '71',
         score: 71,
-        change: '+6%',
+        change: '+21',
         trend: 'up',
     },
     {
         title: 'Ethical & Moral',
-        value: '67%',
+        value: '67',
         score: 67,
-        change: '+3%',
+        change: '+17',
         trend: 'up',
     },
     {
         title: 'Physical & Lifestyle',
-        value: '54%',
+        value: '54',
         score: 54,
-        change: '-2%',
-        trend: 'down',
+        change: '+4',
+        trend: 'up',
     },
     {
         title: 'Identity & Growth',
-        value: '60%',
+        value: '60',
         score: 60,
-        change: '+4%',
+        change: '+10',
         trend: 'up',
     },
 ];
@@ -99,6 +100,7 @@ const kpis: KpiItem[] = [
 export default function Dashboard({
     userData,
     lineChartHistory,
+    metricDeltas = {},
 }: DashboardPageProps) {
     const radarMetrics = userData
         ? [
@@ -119,11 +121,44 @@ export default function Dashboard({
               }))
             : fallbackGrowthData;
 
-    const topMetric = radarMetrics.reduce(
-        (best, metric) =>
-            metric.value > best.value ? metric : best,
-        radarMetrics[0],
+    const buildKpis = (
+        scores: Record<string, number>,
+        deltas: Record<string, number>,
+    ): KpiItem[] => {
+        const items = [
+            { title: 'Emotional Mastery', key: 'emotionalMastery' },
+            { title: 'Cognitive Clarity', key: 'cognitiveClarity' },
+            { title: 'Social & Relational', key: 'socialRelational' },
+            { title: 'Ethical & Moral', key: 'ethicalMoral' },
+            { title: 'Physical & Lifestyle', key: 'physicalLifestyle' },
+            { title: 'Identity & Growth', key: 'identityGrowth' },
+        ];
+
+        return items.map((item) => {
+            const rawScore = scores[item.key] ?? 0;
+            const score = Math.round(rawScore);
+            const changeValue = deltas[item.key] ?? 0;
+            const roundedChange = Math.round(changeValue);
+            return {
+                title: item.title,
+                value: `${score}`,
+                score,
+                change: `${roundedChange >= 0 ? '+' : ''}${roundedChange}`,
+                trend: roundedChange >= 0 ? 'up' : 'down',
+            };
+        });
+    };
+
+    const kpis = userData
+        ? buildKpis(userData, metricDeltas)
+        : fallbackKpis;
+
+    const sortedMetrics = [...radarMetrics].sort(
+        (a, b) => b.value - a.value,
     );
+    const topMetric = sortedMetrics[0];
+    const secondMetric = sortedMetrics[1];
+
     const quickReview = {
         metric: topMetric.label,
         subtitle: 'Your strongest signal right now. Keep reinforcing the habits behind it.',
@@ -131,6 +166,16 @@ export default function Dashboard({
         review:
             'You are consistently scoring higher in this domain compared to the rest of your profile. The last stretch of updates shows steady improvement with fewer regressions. Keep the same routine that produced these gains and look for one small experiment this week to maintain momentum.',
     };
+
+    const secondaryReview = secondMetric
+        ? {
+              metric: secondMetric.label,
+              subtitle: 'A close second. Focus here to round out your profile.',
+              dialogTitle: `Quick Review: ${secondMetric.label}`,
+              review:
+                  'This area is trending upward but still has a few dips. Pick one consistent micro-habit and track it for a week to stabilize gains and avoid regression.',
+          }
+        : undefined;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -150,7 +195,10 @@ export default function Dashboard({
 
                         <div className="flex min-h-0 flex-col gap-4">
                             <RigourCard metrics={radarMetrics} className="h-full" />
-                            <QuickReviewCard data={quickReview} />
+                            <QuickReviewCard
+                                data={quickReview}
+                                secondary={secondaryReview}
+                            />
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\UserData;
 use App\Models\UserScoreHistory;
+use App\Models\UserLabelHistory;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -74,6 +75,39 @@ class UserSeeder extends Seeder
                 $rows,
                 ['user_id', 'recorded_at'],
                 ['overall_score', 'delta', 'updated_at']
+            );
+
+            $labelSeries = [
+                'emotionalMastery' => [58, 60, 62, 63, 64, 66],
+                'cognitiveClarity' => [52, 54, 55, 56, 58, 59],
+                'socialRelational' => [63, 65, 67, 69, 70, 71],
+                'ethicalMoral' => [61, 62, 64, 65, 66, 67],
+                'physicalLifestyle' => [48, 50, 51, 52, 53, 54],
+                'identityGrowth' => [55, 56, 57, 58, 59, 60],
+            ];
+
+            $labelRows = [];
+            $labelStart = Carbon::now('UTC')
+                ->subWeeks(5)
+                ->startOfDay();
+
+            foreach ($labelSeries as $labelKey => $scores) {
+                foreach ($scores as $index => $score) {
+                    $labelRows[] = [
+                        'user_id' => $therapist->id,
+                        'label_key' => $labelKey,
+                        'recorded_at' => $labelStart->copy()->addWeeks($index),
+                        'score' => $score,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+
+            UserLabelHistory::upsert(
+                $labelRows,
+                ['user_id', 'label_key', 'recorded_at'],
+                ['score', 'updated_at']
             );
         }
     }

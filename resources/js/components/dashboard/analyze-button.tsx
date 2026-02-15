@@ -1,6 +1,7 @@
-import { Sparkles } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { create as eventsCreate } from '@/routes/events';
 
 type AnalyzeButtonProps = {
     label?: string;
@@ -8,18 +9,19 @@ type AnalyzeButtonProps = {
 };
 
 export function AnalyzeButton({
-    label = 'Analyse a new claim',
+    label = 'New Reflection',
     className,
 }: AnalyzeButtonProps) {
     return (
-        <Button
-            className={cn(
-                'shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5',
-                className,
-            )}
-        >
-            <Sparkles className="size-4" />
-            {label}
-        </Button>
+        <Link href={eventsCreate().url}>
+            <Button
+                className={cn(
+                    'shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5',
+                    className,
+                )}
+            >
+                {label}
+            </Button>
+        </Link>
     );
 }

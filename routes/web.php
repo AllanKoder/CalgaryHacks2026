@@ -33,6 +33,33 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
             ])
             ->values()
             ->all();
+        $metricDeltas = [];
+
+        if ($user) {
+            $history = $user->labelHistory()
+                ->orderByDesc('recorded_at')
+                ->get(['label_key', 'score', 'recorded_at']);
+
+            $latestByLabel = [];
+            $previousByLabel = [];
+
+            foreach ($history as $row) {
+                $label = $row->label_key;
+                if (! array_key_exists($label, $latestByLabel)) {
+                    $latestByLabel[$label] = (float) $row->score;
+                    continue;
+                }
+
+                if (! array_key_exists($label, $previousByLabel)) {
+                    $previousByLabel[$label] = (float) $row->score;
+                }
+            }
+
+            foreach ($latestByLabel as $label => $latestScore) {
+                $previousScore = $previousByLabel[$label] ?? $latestScore;
+                $metricDeltas[$label] = round($latestScore - $previousScore, 1);
+            }
+        }
 
         return Inertia::render('dashboard', [
             'userData' => $userData
@@ -46,6 +73,7 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
                 ]
                 : null,
             'lineChartHistory' => $lineChartHistory,
+            'metricDeltas' => $metricDeltas,
         ]);
     })->name('dashboard');
 
