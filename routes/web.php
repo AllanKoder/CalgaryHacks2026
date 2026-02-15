@@ -8,6 +8,7 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LearningController;
+use App\Http\Controllers\CommentController;
 use App\Http\Middleware\EnsureOnboardingComplete;
 
 Route::get('/', function () {
@@ -22,6 +23,7 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
     })->name('dashboard');
 
     Route::resource('events', EventController::class);
+    Route::post('events/{event}/make-public', [EventController::class, 'makePublic'])->name('events.makePublic');
 
     Route::get('events/{event}/identification/create', [IdentificationController::class, 'create'])->name('events.identification.create');
     Route::post('events/{event}/identification', [IdentificationController::class, 'store'])->name('events.identification.store');
@@ -35,9 +37,10 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
     Route::put('events/{event}/learning', [LearningController::class, 'update'])->name('events.learning.update');
     Route::delete('events/{event}/learning', [LearningController::class, 'destroy'])->name('events.learning.destroy');
 
-    Route::get('community', function () {
-        return Inertia::render('community');
-    })->name('community');
+    Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::get('comments', [CommentController::class, 'index'])->name('comments.index');
+
+    Route::get('community', [EventController::class, 'community'])->name('community');
 });
 
 Route::get('questionnaire', [FastApiController::class, 'questionnaire'])

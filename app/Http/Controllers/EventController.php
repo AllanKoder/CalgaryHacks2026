@@ -116,4 +116,25 @@ class EventController extends Controller
         return redirect()->route('events.index')
             ->with('success', 'Event deleted successfully.');
     }
+
+    public function makePublic(Event $event)
+    {
+        $this->authorize('update', $event);
+
+        $event->update(['is_public' => true]);
+
+        return back()->with('success', 'Event shared with community successfully.');
+    }
+
+    public function community()
+    {
+        $events = Event::where('is_public', true)
+            ->with(['identification', 'user', 'comments.user'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('Community', [
+            'events' => $events,
+        ]);
+    }
 }
