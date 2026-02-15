@@ -22,6 +22,8 @@ export function KpiGrid({ items }: KpiGridProps) {
                 const circumference = 2 * Math.PI * radius;
                 const progress = Math.max(0, Math.min(100, kpi.score)) / 100;
                 const dashOffset = circumference * (1 - progress);
+                const valueText = kpi.value.replace(/%/g, '');
+                const changeText = kpi.change.replace(/%/g, '');
                 const gradientId = `donut-${kpi.title
                     .toLowerCase()
                     .replace(/[^a-z0-9]+/g, '-')}`;
@@ -85,9 +87,9 @@ export function KpiGrid({ items }: KpiGridProps) {
                                 y="50%"
                                 textAnchor="middle"
                                 dominantBaseline="central"
-                                className="text-[11px] font-semibold fill-foreground"
+                                className="text-[13px] font-semibold fill-foreground"
                             >
-                                {kpi.value}
+                                {valueText}
                             </text>
                         </svg>
 
@@ -107,7 +109,7 @@ export function KpiGrid({ items }: KpiGridProps) {
                                 ) : (
                                     <ArrowDownRight className="size-3.5" />
                                 )}
-                                {kpi.change}
+                                {changeText}
                             </span>
                         </div>
                     </div>

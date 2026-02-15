@@ -158,11 +158,14 @@ export default function Dashboard({
                                 data={growthData}
                                 metrics={kpis}
                             />
+                            <CommunityPreviewCard
+                                items={communityItems}
+                                maxItems={2}
+                            />
                         </div>
 
                         <div className="flex flex-col gap-6">
                             <RigourCard metrics={radarMetrics} />
-                            <CommunityPreviewCard items={communityItems} />
                         </div>
                     </div>
                 </div>
