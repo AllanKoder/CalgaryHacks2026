@@ -73,7 +73,7 @@ export default function Community({ events }: Props) {
                                                 )}
                                             </div>
                                             <CardDescription>
-                                                Shared by {event.user.name}
+                                                Shared by Anyonomous
                                             </CardDescription>
                                         </div>
                                         <Badge variant={
