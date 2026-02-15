@@ -145,7 +145,7 @@ export default function SimilarReflections({ eventId }: SimilarReflectionsProps)
                                     variant="secondary"
                                     className="text-xs shrink-0"
                                 >
-                                    {Math.round((1 - reflection.similarity_score) * 100)}% match
+                                    {Math.round(reflection.similarity_score * 100)}% match
                                 </Badge>
                             )}
                         </div>
