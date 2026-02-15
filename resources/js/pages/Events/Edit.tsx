@@ -6,39 +6,52 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { dashboard, eventsIndex, eventsCreate, eventsStore } from '@/routes';
+import { dashboard, eventsIndex, eventsUpdate } from '@/routes';
+
+interface Event {
+    id: number;
+    title: string;
+    description: string;
+    emotional_severity: number;
+    triggers: string | null;
+    occurred_at: string | null;
+}
+
+interface Props {
+    event: Event;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
     { title: 'Events', href: eventsIndex().url },
-    { title: 'Create', href: eventsCreate().url },
+    { title: 'Edit', href: '#' },
 ];
 
-export default function Create() {
-    const { data, setData, post, processing, errors } = useForm({
-        title: '',
-        description: '',
-        emotional_severity: 3,
-        triggers: '',
-        occurred_at: '',
+export default function Edit({ event }: Props) {
+    const { data, setData, put, processing, errors } = useForm({
+        title: event.title || '',
+        description: event.description,
+        emotional_severity: event.emotional_severity,
+        triggers: event.triggers || '',
+        occurred_at: event.occurred_at || '',
     });
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        post(eventsStore().url);
+        put(eventsUpdate(event.id).url);
     }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Record an Event" />
+            <Head title="Edit Event" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <h1 className="text-2xl font-bold">Record an Event</h1>
+                <h1 className="text-2xl font-bold">Edit Event</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle>Event Details</CardTitle>
-                            <CardDescription>Describe what happened</CardDescription>
+                            <CardDescription>Update event information</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
@@ -120,7 +133,7 @@ export default function Create() {
 
                     <div className="flex gap-2">
                         <Button type="submit" disabled={processing}>
-                            Save Event
+                            Update Event
                         </Button>
                         <Button type="button" variant="outline" onClick={() => window.history.back()}>
                             Cancel
