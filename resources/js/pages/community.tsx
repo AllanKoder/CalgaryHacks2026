@@ -45,9 +45,9 @@ export default function Community({ events }: Props) {
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-8">
                 <div>
-                    <h1 className="text-3xl font-bold">Community</h1>
+                    <h1 className="text-3xl font-bold">Community Learning</h1>
                     <p className="text-muted-foreground mt-2">
-                        Learn from others' experiences and share your insights
+                        Learn from others' reflective practice and share your insights
                     </p>
                 </div>
 
@@ -55,7 +55,7 @@ export default function Community({ events }: Props) {
                     <Card>
                         <CardContent className="py-8">
                             <p className="text-center text-muted-foreground">
-                                No community posts yet. Share your events to get started!
+                                No shared reflections yet. Make your reflections public to enable peer learning!
                             </p>
                         </CardContent>
                     </Card>

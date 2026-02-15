@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\FastApiController;
@@ -18,8 +19,21 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+    Route::get('dashboard', function (Request $request) {
+        $userData = $request->user()?->userData;
+
+        return Inertia::render('dashboard', [
+            'userData' => $userData
+                ? [
+                    'emotionalMastery' => $userData->EmotionalMastery,
+                    'cognitiveClarity' => $userData->CognitiveClarity,
+                    'socialRelational' => $userData->SocialRelational,
+                    'ethicalMoral' => $userData->EthicalMoral,
+                    'physicalLifestyle' => $userData->PhysicalHealth,
+                    'identityGrowth' => $userData->IdentityGrowth,
+                ]
+                : null,
+        ]);
     })->name('dashboard');
 
     Route::resource('events', EventController::class);

@@ -11,6 +11,17 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/route-helpers';
 import type { BreadcrumbItem } from '@/types';
 
+type DashboardPageProps = {
+    userData?: {
+        emotionalMastery: number;
+        cognitiveClarity: number;
+        socialRelational: number;
+        ethicalMoral: number;
+        physicalLifestyle: number;
+        identityGrowth: number;
+    } | null;
+};
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -34,7 +45,7 @@ const growthStats = [
     { label: 'Social & Relational', value: '71%' },
 ];
 
-const radarMetrics = [
+const fallbackRadarMetrics = [
     { label: 'Emotional Mastery', value: 63 },
     { label: 'Cognitive Clarity', value: 58 },
     { label: 'Social & Relational', value: 71 },
@@ -106,7 +117,18 @@ const communityItems: CommunityItem[] = [
     },
 ];
 
-export default function Dashboard() {
+export default function Dashboard({ userData }: DashboardPageProps) {
+    const radarMetrics = userData
+        ? [
+              { label: 'Emotional Mastery', value: userData.emotionalMastery },
+              { label: 'Cognitive Clarity', value: userData.cognitiveClarity },
+              { label: 'Social & Relational', value: userData.socialRelational },
+              { label: 'Ethical & Moral', value: userData.ethicalMoral },
+              { label: 'Physical & Lifestyle', value: userData.physicalLifestyle },
+              { label: 'Identity & Growth', value: userData.identityGrowth },
+          ]
+        : fallbackRadarMetrics;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />

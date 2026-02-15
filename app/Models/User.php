@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use App\Models\UserData;
+use App\Models\UserScoreHistory;
 
 class User extends Authenticatable
 {
@@ -59,5 +61,15 @@ class User extends Authenticatable
     public function events()
     {
         return $this->hasMany(Event::class);
+    }
+
+    public function userData()
+    {
+        return $this->hasOne(UserData::class);
+    }
+
+    public function scoreHistory()
+    {
+        return $this->hasMany(UserScoreHistory::class);
     }
 }
