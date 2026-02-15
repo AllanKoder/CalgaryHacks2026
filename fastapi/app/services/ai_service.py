@@ -42,7 +42,7 @@ async def generate_quiz_analysis(
         Analyze these quiz results:
         {transcript}
 
-        Provide a "Mindset Analysis" report in Markdown format:
+        Provide a "Mindset Analysis" report in Json format:
         1. **The Core Profile**: A 2-sentence summary of their current psychological state.
         2. **Primary Strength**: Identify the category where they show the most maturity.
         3. **The Growth Edge**: Identify one specific area (with reasoning) that they should prioritize.

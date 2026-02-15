@@ -40,7 +40,7 @@ def _find_sublabel_enum_member(value: str) -> SubLabelBase:
 
 
 @router.post("/init-quiz", response_model=UserScores)
-async def init_quiz_scores(payload: QuizSubmission):
+def init_quiz_scores(payload: QuizSubmission):
     """
     Calculate initial scores based on quiz answers.
     """
