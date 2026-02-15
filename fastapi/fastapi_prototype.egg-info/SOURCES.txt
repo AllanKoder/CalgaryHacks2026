@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+app/__init__.py
+app/app.py
+app/settings.py
+fastapi_prototype.egg-info/PKG-INFO
+fastapi_prototype.egg-info/SOURCES.txt
+fastapi_prototype.egg-info/dependency_links.txt
+fastapi_prototype.egg-info/requires.txt
+fastapi_prototype.egg-info/top_level.txt

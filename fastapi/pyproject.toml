@@ -1,0 +1,16 @@
+[project]
+name = "fastapi-prototype"
+version = "0.1.0"
+description = "FastAPI prototype for Laravel"
+dependencies = [
+  "fastapi[standard]",
+  "uvicorn[standard]",
+  "sqlalchemy",
+  "pymysql",
+  "python-dotenv",
+  "pydantic",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
