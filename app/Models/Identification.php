@@ -13,6 +13,15 @@ class Identification extends Model
     protected $fillable = [
         'event_id',
         'tag',
+        'main_category',
+        'sub_category',
+        'assumptions',
+        'pattern_recognition',
+    ];
+
+    protected $casts = [
+        'assumptions' => 'array',
+        'pattern_recognition' => 'array',
     ];
 
     public function event()

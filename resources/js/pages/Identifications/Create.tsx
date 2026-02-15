@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { dashboard, eventsIndex, eventsIdentificationStore } from '@/route-helpers';
+import { dashboard } from '@/routes';
+import { index as eventsIndex } from '@/routes/events';
+import { store as eventsIdentificationStore } from '@/routes/events/identification';
 
 interface Event {
     id: number;

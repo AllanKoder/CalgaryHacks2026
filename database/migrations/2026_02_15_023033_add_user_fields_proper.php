@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
 
-                      $table->boolean('is_first_time')->default(true);
-            });
+            $table->boolean('is_first_time')->default(true);
+        });
     }
 
     /**
@@ -22,7 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $table->dropColumn('is_first_time');
-
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('is_first_time');
+        });
     }
 };

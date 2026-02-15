@@ -6,7 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { dashboard, eventsIndex, eventsCreate, eventsStore } from '@/route-helpers';
+import { dashboard } from '@/routes';
+import { index as eventsIndex, create as eventsCreate, store as eventsStore } from '@/routes/events';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
@@ -21,19 +22,21 @@ export default function Create() {
         emotional_severity: 3,
         triggers: '',
         occurred_at: '',
-        // Context fields
-        location: '',
-        people_present: '',
-        power_dynamics: '',
-        what_happened_before: '',
-        mental_emotional_state: '',
-        organizational_pressures: '',
-        // Impact fields
-        directly_affected: '',
-        indirectly_affected: '',
-        immediate_consequences: '',
-        longer_term_consequences: '',
-        impact_significance: 5,
+        context: {
+            location: '',
+            people_present: '',
+            power_dynamics: '',
+            what_happened_before: '',
+            mental_emotional_state: '',
+            organizational_pressures: '',
+        },
+        impact: {
+            directly_affected: '',
+            indirectly_affected: '',
+            immediate_consequences: '',
+            longer_term_consequences: '',
+            impact_significance: 5,
+        },
     });
 
     function handleSubmit(e: React.FormEvent) {
@@ -141,12 +144,12 @@ export default function Create() {
                                 <Label htmlFor="location">Where did this happen?</Label>
                                 <Input
                                     id="location"
-                                    value={data.location}
-                                    onChange={(e) => setData('location', e.target.value)}
+                                    value={data.context.location}
+                                    onChange={(e) => setData('context', { ...data.context, location: e.target.value })}
                                     placeholder="Setting/environment"
                                 />
-                                {errors.location && (
-                                    <p className="text-sm text-destructive mt-1">{errors.location}</p>
+                                {errors['context.location'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['context.location']}</p>
                                 )}
                             </div>
 
@@ -154,12 +157,12 @@ export default function Create() {
                                 <Label htmlFor="people_present">Who was present?</Label>
                                 <Textarea
                                     id="people_present"
-                                    value={data.people_present}
-                                    onChange={(e) => setData('people_present', e.target.value)}
+                                    value={data.context.people_present}
+                                    onChange={(e) => setData('context', { ...data.context, people_present: e.target.value })}
                                     placeholder="Who else was there?"
                                 />
-                                {errors.people_present && (
-                                    <p className="text-sm text-destructive mt-1">{errors.people_present}</p>
+                                {errors['context.people_present'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['context.people_present']}</p>
                                 )}
                             </div>
 
@@ -167,12 +170,12 @@ export default function Create() {
                                 <Label htmlFor="power_dynamics">What were the power dynamics?</Label>
                                 <Textarea
                                     id="power_dynamics"
-                                    value={data.power_dynamics}
-                                    onChange={(e) => setData('power_dynamics', e.target.value)}
+                                    value={data.context.power_dynamics}
+                                    onChange={(e) => setData('context', { ...data.context, power_dynamics: e.target.value })}
                                     placeholder="Authority, hierarchy, relationships"
                                 />
-                                {errors.power_dynamics && (
-                                    <p className="text-sm text-destructive mt-1">{errors.power_dynamics}</p>
+                                {errors['context.power_dynamics'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['context.power_dynamics']}</p>
                                 )}
                             </div>
 
@@ -180,12 +183,12 @@ export default function Create() {
                                 <Label htmlFor="what_happened_before">What was happening right before?</Label>
                                 <Textarea
                                     id="what_happened_before"
-                                    value={data.what_happened_before}
-                                    onChange={(e) => setData('what_happened_before', e.target.value)}
+                                    value={data.context.what_happened_before}
+                                    onChange={(e) => setData('context', { ...data.context, what_happened_before: e.target.value })}
                                     placeholder="Events leading up to this"
                                 />
-                                {errors.what_happened_before && (
-                                    <p className="text-sm text-destructive mt-1">{errors.what_happened_before}</p>
+                                {errors['context.what_happened_before'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['context.what_happened_before']}</p>
                                 )}
                             </div>
 
@@ -193,12 +196,12 @@ export default function Create() {
                                 <Label htmlFor="mental_emotional_state">What was your mental/emotional state?</Label>
                                 <Textarea
                                     id="mental_emotional_state"
-                                    value={data.mental_emotional_state}
-                                    onChange={(e) => setData('mental_emotional_state', e.target.value)}
+                                    value={data.context.mental_emotional_state}
+                                    onChange={(e) => setData('context', { ...data.context, mental_emotional_state: e.target.value })}
                                     placeholder="Rushed, tired, stressed, distracted?"
                                 />
-                                {errors.mental_emotional_state && (
-                                    <p className="text-sm text-destructive mt-1">{errors.mental_emotional_state}</p>
+                                {errors['context.mental_emotional_state'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['context.mental_emotional_state']}</p>
                                 )}
                             </div>
 
@@ -206,12 +209,12 @@ export default function Create() {
                                 <Label htmlFor="organizational_pressures">Were there organizational/time/resource pressures?</Label>
                                 <Textarea
                                     id="organizational_pressures"
-                                    value={data.organizational_pressures}
-                                    onChange={(e) => setData('organizational_pressures', e.target.value)}
+                                    value={data.context.organizational_pressures}
+                                    onChange={(e) => setData('context', { ...data.context, organizational_pressures: e.target.value })}
                                     placeholder="Deadlines, constraints, limited resources"
                                 />
-                                {errors.organizational_pressures && (
-                                    <p className="text-sm text-destructive mt-1">{errors.organizational_pressures}</p>
+                                {errors['context.organizational_pressures'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['context.organizational_pressures']}</p>
                                 )}
                             </div>
                         </CardContent>
@@ -227,12 +230,12 @@ export default function Create() {
                                 <Label htmlFor="directly_affected">Who was directly affected? How?</Label>
                                 <Textarea
                                     id="directly_affected"
-                                    value={data.directly_affected}
-                                    onChange={(e) => setData('directly_affected', e.target.value)}
+                                    value={data.impact.directly_affected}
+                                    onChange={(e) => setData('impact', { ...data.impact, directly_affected: e.target.value })}
                                     placeholder="Primary people impacted"
                                 />
-                                {errors.directly_affected && (
-                                    <p className="text-sm text-destructive mt-1">{errors.directly_affected}</p>
+                                {errors['impact.directly_affected'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['impact.directly_affected']}</p>
                                 )}
                             </div>
 
@@ -240,12 +243,12 @@ export default function Create() {
                                 <Label htmlFor="indirectly_affected">Who was indirectly affected?</Label>
                                 <Textarea
                                     id="indirectly_affected"
-                                    value={data.indirectly_affected}
-                                    onChange={(e) => setData('indirectly_affected', e.target.value)}
+                                    value={data.impact.indirectly_affected}
+                                    onChange={(e) => setData('impact', { ...data.impact, indirectly_affected: e.target.value })}
                                     placeholder="Observers, teams, communities"
                                 />
-                                {errors.indirectly_affected && (
-                                    <p className="text-sm text-destructive mt-1">{errors.indirectly_affected}</p>
+                                {errors['impact.indirectly_affected'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['impact.indirectly_affected']}</p>
                                 )}
                             </div>
 
@@ -253,12 +256,12 @@ export default function Create() {
                                 <Label htmlFor="immediate_consequences">What were the immediate consequences?</Label>
                                 <Textarea
                                     id="immediate_consequences"
-                                    value={data.immediate_consequences}
-                                    onChange={(e) => setData('immediate_consequences', e.target.value)}
+                                    value={data.impact.immediate_consequences}
+                                    onChange={(e) => setData('impact', { ...data.impact, immediate_consequences: e.target.value })}
                                     placeholder="What happened right after"
                                 />
-                                {errors.immediate_consequences && (
-                                    <p className="text-sm text-destructive mt-1">{errors.immediate_consequences}</p>
+                                {errors['impact.immediate_consequences'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['impact.immediate_consequences']}</p>
                                 )}
                             </div>
 
@@ -266,12 +269,12 @@ export default function Create() {
                                 <Label htmlFor="longer_term_consequences">What could the longer-term consequences be?</Label>
                                 <Textarea
                                     id="longer_term_consequences"
-                                    value={data.longer_term_consequences}
-                                    onChange={(e) => setData('longer_term_consequences', e.target.value)}
+                                    value={data.impact.longer_term_consequences}
+                                    onChange={(e) => setData('impact', { ...data.impact, longer_term_consequences: e.target.value })}
                                     placeholder="Potential future impacts"
                                 />
-                                {errors.longer_term_consequences && (
-                                    <p className="text-sm text-destructive mt-1">{errors.longer_term_consequences}</p>
+                                {errors['impact.longer_term_consequences'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['impact.longer_term_consequences']}</p>
                                 )}
                             </div>
 
@@ -287,11 +290,11 @@ export default function Create() {
                                     type="number"
                                     min="1"
                                     max="10"
-                                    value={data.impact_significance}
-                                    onChange={(e) => setData('impact_significance', parseInt(e.target.value))}
+                                    value={data.impact.impact_significance}
+                                    onChange={(e) => setData('impact', { ...data.impact, impact_significance: parseInt(e.target.value) })}
                                 />
-                                {errors.impact_significance && (
-                                    <p className="text-sm text-destructive mt-1">{errors.impact_significance}</p>
+                                {errors['impact.impact_significance'] && (
+                                    <p className="text-sm text-destructive mt-1">{errors['impact.impact_significance']}</p>
                                 )}
                             </div>
                         </CardContent>
