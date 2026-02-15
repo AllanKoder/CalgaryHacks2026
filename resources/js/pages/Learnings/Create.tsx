@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { dashboard, eventsIndex, eventsLearningStore } from '@/routes';
 
 interface Event {
     id: number;
@@ -16,8 +17,8 @@ interface Props {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Dashboard', href: '/dashboard' },
-    { title: 'Events', href: '/events' },
+    { title: 'Dashboard', href: dashboard().url },
+    { title: 'Events', href: eventsIndex().url },
     { title: 'Add Learning', href: '#' },
 ];
 
@@ -30,7 +31,7 @@ export default function Create({ event }: Props) {
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        post(`/events/${event.id}/learning`);
+        post(eventsLearningStore(event.id).url);
     }
 
     return (

@@ -28,9 +28,11 @@ class EventController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'emotional_severity' => 'required|integer|min:1|max:10',
-            'analysis' => 'nullable|string',
+            'emotional_severity' => 'required|integer|min:1|max:5',
+            'triggers' => 'nullable|string',
+            'occurred_at' => 'nullable|date',
         ]);
 
         $event = auth()->user()->events()->create($validated);
@@ -64,9 +66,11 @@ class EventController extends Controller
         $this->authorize('update', $event);
 
         $validated = $request->validate([
+            'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'emotional_severity' => 'required|integer|min:1|max:10',
-            'analysis' => 'nullable|string',
+            'emotional_severity' => 'required|integer|min:1|max:5',
+            'triggers' => 'nullable|string',
+            'occurred_at' => 'nullable|date',
         ]);
 
         $event->update($validated);

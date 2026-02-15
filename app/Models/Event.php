@@ -12,13 +12,16 @@ class Event extends Model
 
     protected $fillable = [
         'user_id',
+        'title',
         'description',
         'emotional_severity',
-        'analysis',
+        'triggers',
+        'occurred_at',
     ];
 
     protected $casts = [
         'emotional_severity' => 'integer',
+        'occurred_at' => 'date',
     ];
 
     public function user()

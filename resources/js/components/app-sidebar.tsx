@@ -14,13 +14,18 @@ import {
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
-import { analysis, community, dashboard } from '@/routes';
+import { analysis, community, dashboard, eventsIndex } from '@/routes';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Events',
+        href: eventsIndex().url,
+        icon: ClipboardList,
     },
     {
         title: 'Analysis',
@@ -31,11 +36,6 @@ const mainNavItems: NavItem[] = [
         title: 'Community',
         href: community(),
         icon: Users,
-    },
-    {
-        title: 'Events',
-        href: '/events',
-        icon: ClipboardList,
     },
 ];
 

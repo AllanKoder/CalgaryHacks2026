@@ -5,45 +5,51 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { dashboard, eventsIndex, eventsIdentificationStore } from '@/routes';
+import { dashboard, eventsIndex, eventsIdentificationUpdate } from '@/routes';
 
 interface Event {
     id: number;
     description: string;
 }
 
+interface Identification {
+    id: number;
+    tag: string;
+}
+
 interface Props {
     event: Event;
+    identification: Identification;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
     { title: 'Events', href: eventsIndex().url },
-    { title: 'Add Identification', href: '#' },
+    { title: 'Edit Identification', href: '#' },
 ];
 
-export default function Create({ event }: Props) {
-    const { data, setData, post, processing, errors } = useForm({
-        tag: '',
+export default function Edit({ event, identification }: Props) {
+    const { data, setData, put, processing, errors } = useForm({
+        tag: identification.tag,
     });
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        post(eventsIdentificationStore(event.id).url);
+        put(eventsIdentificationUpdate(event.id).url);
     }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Add Identification" />
+            <Head title="Edit Identification" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <h1 className="text-2xl font-bold">Add Identification</h1>
+                <h1 className="text-2xl font-bold">Edit Identification</h1>
                 <p className="text-muted-foreground">Event: {event.description}</p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle>Identification</CardTitle>
-                            <CardDescription>Categorize the mental aspect of this event</CardDescription>
+                            <CardDescription>Update the mental aspect categorization</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div>
@@ -64,7 +70,7 @@ export default function Create({ event }: Props) {
 
                     <div className="flex gap-2">
                         <Button type="submit" disabled={processing}>
-                            Save Identification
+                            Update Identification
                         </Button>
                         <Button type="button" variant="outline" onClick={() => window.history.back()}>
                             Cancel
