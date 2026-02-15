@@ -4,11 +4,7 @@ import type { BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { dashboard } from '@/routes';
-import { index as eventsIndex, edit as eventsEdit, destroy as eventsDestroy } from '@/routes/events';
-import { create as eventsIdentificationCreate, edit as eventsIdentificationEdit } from '@/routes/events/identification';
-import { create as eventsLearningCreate, edit as eventsLearningEdit } from '@/routes/events/learning';
-import { create as eventsGoalCreate, edit as eventsGoalEdit } from '@/routes/events/goal';
+import { dashboard, eventsIndex, eventsEdit, eventsDestroy, eventsIdentificationCreate, eventsIdentificationEdit, eventsLearningCreate, eventsLearningEdit } from '@/routes';
 import { MAIN_CATEGORY_LABELS, SUBCATEGORIES, type MainCategory } from '@/lib/categories';
 
 interface Event {
@@ -54,10 +50,6 @@ interface Event {
         action_plan: string;
         next_time_strategy: string | null;
         resources: string | null;
-    } | null;
-    goal: {
-        main_category: string;
-        description: string | null;
     } | null;
 }
 
@@ -360,17 +352,6 @@ export default function Show({ event }: Props) {
                                                 Consult Community
                                                 <Badge variant="secondary" className="ml-2 text-xs">Coming Soon</Badge>
                                             </Button>
-                                            <Button
-                                                variant="outline"
-                                                className="flex-1"
-                                                disabled
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                                </svg>
-                                                Consult AI Model
-                                                <Badge variant="secondary" className="ml-2 text-xs">Coming Soon</Badge>
-                                            </Button>
                                         </div>
                                     </div>
                                 </div>
@@ -431,54 +412,6 @@ export default function Show({ event }: Props) {
                         ) : (
                             <p className="text-sm text-muted-foreground">
                                 No learning entry added yet.
-                            </p>
-                        )}
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <div className="flex justify-between items-center">
-                            <CardTitle>Goal</CardTitle>
-                            {event.goal ? (
-                                <Link href={eventsGoalEdit(event.id).url}>
-                                    <Button variant="outline" size="sm">Edit</Button>
-                                </Link>
-                            ) : (
-                                <Link href={eventsGoalCreate(event.id).url}>
-                                    <Button
-                                        size="sm"
-                                        disabled={!event.learning}
-                                    >
-                                        Add Goal
-                                    </Button>
-                                </Link>
-                            )}
-                        </div>
-                        {!event.learning && (
-                            <CardDescription className="mt-2">
-                                Complete the learning section first before setting a goal
-                            </CardDescription>
-                        )}
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        {event.goal ? (
-                            <>
-                                <div>
-                                    <h3 className="font-semibold mb-2">Category</h3>
-                                    <Badge variant="secondary">{event.goal.main_category}</Badge>
-                                </div>
-
-                                {event.goal.description && (
-                                    <div>
-                                        <h3 className="font-semibold mb-2">Description</h3>
-                                        <p className="text-sm text-muted-foreground">{event.goal.description}</p>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <p className="text-sm text-muted-foreground">
-                                No goal set yet.
                             </p>
                         )}
                     </CardContent>
