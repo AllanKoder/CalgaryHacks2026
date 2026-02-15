@@ -50,6 +50,8 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
 
     Route::resource('events', EventController::class);
     Route::post('events/{event}/make-public', [EventController::class, 'makePublic'])->name('events.makePublic');
+    Route::get('events/{event}/ai-consulting', [EventController::class, 'aiConsulting'])->name('events.ai-consulting');
+    Route::post('events/{event}/ai-consulting', [EventController::class, 'aiConsultingUpdate'])->name('events.ai-consulting.update');
 
     Route::get('events/{event}/identification/create', [IdentificationController::class, 'create'])->name('events.identification.create');
     Route::post('events/{event}/identification', [IdentificationController::class, 'store'])->name('events.identification.store');

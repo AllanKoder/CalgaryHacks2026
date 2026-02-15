@@ -373,15 +373,17 @@ export default function Show({ event }: Props) {
                                                 </svg>
                                                 {event.is_public ? 'Shared with Community' : 'Consult Community'}
                                             </Button>
-                                            <Button
-                                                variant="outline"
-                                                className="flex-1"
-                                            >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                </svg>
-                                                Consult AI Model
-                                            </Button>
+                                            <Link href={`/events/${event.id}/ai-consulting`} className="flex-1">
+                                                <Button
+                                                    variant="outline"
+                                                    className="w-full"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 8.75h.008v.008H9.75V8.75zm4.5 0h.008v.008h-.008V8.75zM8.25 13.25h7.5m-7.5 0a3 3 0 007.5 0m4.5-5.25a9.75 9.75 0 11-19.5 0 9.75 9.75 0 0119.5 0z" />
+                                                    </svg>
+                                                    Consult AI Model
+                                                </Button>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>

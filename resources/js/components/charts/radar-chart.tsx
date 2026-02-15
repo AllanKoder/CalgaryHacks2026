@@ -11,6 +11,10 @@ type RadarChartProps = {
     maxValue?: number;
     levels?: number;
     size?: number;
+    padding?: number;
+    labelOffset?: number;
+    showValues?: boolean;
+    maxLabelChars?: number;
     className?: string;
 };
 
@@ -24,6 +28,10 @@ export function RadarChart({
     maxValue = 100,
     levels = 5,
     size = 260,
+    padding = 32,
+    labelOffset = 18,
+    showValues = true,
+    maxLabelChars = 14,
     className,
 }: RadarChartProps) {
     const {
@@ -38,7 +46,7 @@ export function RadarChart({
     } = useMemo(() => {
         const count = Math.max(metrics.length, 3);
         const centerPoint = size / 2;
-        const outerRadius = size / 2 - 28;
+        const outerRadius = size / 2 - padding;
         const step = (Math.PI * 2) / count;
 
         const polarPoint = (r: number, index: number) => {
@@ -83,7 +91,7 @@ export function RadarChart({
         const dataPathValue = buildPath(dataPts);
 
         const labels = Array.from({ length: count }, (_, index) =>
-            polarPoint(outerRadius + 20, index),
+            polarPoint(outerRadius + labelOffset, index),
         );
 
         return {
@@ -96,12 +104,38 @@ export function RadarChart({
             dataPoints: dataPts,
             labelPoints: labels,
         };
-    }, [levels, maxValue, metrics, size]);
+    }, [labelOffset, levels, maxValue, metrics, padding, size]);
 
     const labelForIndex = (index: number) =>
         metrics[index]?.label ?? `Metric ${index + 1}`;
-    const valueForIndex = (index: number) =>
-        metrics[index]?.value ?? 0;
+    const valueForIndex = (index: number) => metrics[index]?.value ?? 0;
+
+    const wrapLabel = (label: string) => {
+        if (!label) return [''];
+        const words = label.split(' ');
+        const lines: string[] = [];
+        let current = '';
+
+        words.forEach((word) => {
+            const next = current ? `${current} ${word}` : word;
+            if (next.length > maxLabelChars && current) {
+                lines.push(current);
+                current = word;
+            } else {
+                current = next;
+            }
+        });
+
+        if (current) {
+            lines.push(current);
+        }
+
+        if (lines.length === 0) {
+            lines.push(label);
+        }
+
+        return lines;
+    };
 
     return (
         <div className={cn('w-full', className)}>
@@ -121,12 +155,12 @@ export function RadarChart({
                         <stop
                             offset="0%"
                             stopColor="var(--color-chart-2)"
-                            stopOpacity="0.45"
+                            stopOpacity="0.35"
                         />
                         <stop
                             offset="100%"
                             stopColor="var(--color-chart-1)"
-                            stopOpacity="0.25"
+                            stopOpacity="0.22"
                         />
                     </linearGradient>
                 </defs>
@@ -137,7 +171,7 @@ export function RadarChart({
                         d={path}
                         fill="none"
                         stroke="var(--color-border)"
-                        strokeOpacity="0.7"
+                        strokeOpacity="0.4"
                         strokeDasharray={index === gridPaths.length - 1 ? '' : '4 6'}
                     />
                 ))}
@@ -150,7 +184,7 @@ export function RadarChart({
                         x2={axis.x}
                         y2={axis.y}
                         stroke="var(--color-border)"
-                        strokeOpacity="0.6"
+                        strokeOpacity="0.35"
                     />
                 ))}
 
@@ -187,16 +221,26 @@ export function RadarChart({
                             y={point.y}
                             textAnchor={anchor}
                             dominantBaseline="central"
-                            className="text-[10px] font-medium fill-muted-foreground"
+                            className="text-[9px] font-semibold fill-muted-foreground"
                         >
-                            <tspan>{labelForIndex(index)}</tspan>
-                            <tspan
-                                x={point.x}
-                                dy="1.2em"
-                                className="text-[10px] fill-muted-foreground/60"
-                            >
-                                {valueForIndex(index)}
-                            </tspan>
+                            {wrapLabel(labelForIndex(index)).map((line, lineIndex) => (
+                                <tspan
+                                    key={`${line}-${lineIndex}`}
+                                    x={point.x}
+                                    dy={lineIndex === 0 ? '0' : '1.1em'}
+                                >
+                                    {line}
+                                </tspan>
+                            ))}
+                            {showValues && (
+                                <tspan
+                                    x={point.x}
+                                    dy="1.1em"
+                                    className="text-[8px] fill-muted-foreground/60"
+                                >
+                                    {valueForIndex(index)}
+                                </tspan>
+                            )}
                         </text>
                     );
                 })}
