@@ -4,10 +4,10 @@ import type { BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { dashboard } from '@/routes';
 import { index as eventsIndex, edit as eventsEdit, destroy as eventsDestroy } from '@/routes/events';
 import { create as eventsIdentificationCreate, edit as eventsIdentificationEdit } from '@/routes/events/identification';
 import { create as eventsLearningCreate, edit as eventsLearningEdit } from '@/routes/events/learning';
+import { dashboard, eventsIndex, eventsEdit, eventsDestroy, eventsIdentificationCreate, eventsIdentificationEdit, eventsLearningCreate, eventsLearningEdit } from '@/route-helpers';
 
 interface Event {
     id: number;

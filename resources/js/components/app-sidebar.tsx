@@ -14,8 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
-import { analysis, community, dashboard } from '@/routes';
-import { index as eventsIndex } from '@/routes/events';
+import { analysis, community, dashboard, eventsIndex } from '@/route-helpers';
 
 const mainNavItems: NavItem[] = [
     {
