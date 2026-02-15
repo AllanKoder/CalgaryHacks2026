@@ -72,6 +72,9 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
     Route::get('events/{event}/similar', [SimilarReflectionsController::class, 'index'])->name('events.similar');
 
     Route::get('community', [EventController::class, 'community'])->name('community');
+
+    Route::post('diagnostic/start', [FastApiController::class, 'diagnosticStart'])->name('diagnostic.start');
+    Route::post('diagnostic/answer', [FastApiController::class, 'diagnosticAnswer'])->name('diagnostic.answer');
 });
 
 Route::get('questionnaire', [FastApiController::class, 'questionnaire'])
