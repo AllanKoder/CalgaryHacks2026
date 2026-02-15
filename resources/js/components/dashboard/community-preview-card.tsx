@@ -12,17 +12,24 @@ export type CommunityItem = {
 
 type CommunityPreviewCardProps = {
     items: CommunityItem[];
+    maxItems?: number;
 };
 
-export function CommunityPreviewCard({ items }: CommunityPreviewCardProps) {
+export function CommunityPreviewCard({
+    items,
+    maxItems,
+}: CommunityPreviewCardProps) {
+    const displayItems =
+        typeof maxItems === 'number' ? items.slice(0, maxItems) : items;
+
     return (
-        <div className="rounded-2xl border border-border/60 bg-card/70 p-5 shadow-sm backdrop-blur">
+        <div className="rounded-2xl border border-border/60 bg-card/70 p-4 shadow-sm backdrop-blur">
             <div className="flex items-center justify-between">
                 <div>
                     <p className="text-sm font-semibold text-foreground">
                         Community Preview
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[11px] text-muted-foreground">
                         Fresh discussions from your network.
                     </p>
                 </div>
@@ -31,18 +38,18 @@ export function CommunityPreviewCard({ items }: CommunityPreviewCardProps) {
                 </Button>
             </div>
 
-            <div className="mt-5 space-y-4">
-                {items.map((item) => (
+            <div className="mt-4 space-y-3">
+                {displayItems.map((item) => (
                     <div
                         key={item.title}
-                        className="rounded-xl border border-border/60 bg-background/70 px-4 py-3"
+                        className="rounded-xl border border-border/60 bg-background/70 px-3 py-2.5"
                     >
                         <div className="flex items-start justify-between gap-3">
                             <div>
                                 <p className="text-sm font-medium text-foreground">
                                     {item.title}
                                 </p>
-                                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                                <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
                                     <span>
                                         {item.author} - {item.time}
                                     </span>

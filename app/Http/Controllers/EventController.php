@@ -126,6 +126,50 @@ class EventController extends Controller
         return back()->with('success', 'Event shared with community successfully.');
     }
 
+    public function aiConsulting(Event $event)
+    {
+        $this->authorize('view', $event);
+
+        $event->load(['learning']);
+
+        return Inertia::render('Events/AiConsulting', [
+            'event' => $event,
+            'question' => 'When did your interpretation of the moment shift, and what evidence could challenge that interpretation?',
+        ]);
+    }
+
+    public function aiConsultingUpdate(Request $request, Event $event)
+    {
+        $this->authorize('update', $event);
+
+        $validated = $request->validate([
+            'response' => 'required|string|max:4000',
+        ]);
+
+        $event->load(['learning']);
+
+        if ($event->learning) {
+            $existingResources = $event->learning->resources ? trim($event->learning->resources) : '';
+            $responseBlock = "AI Consulting Response:\n" . $validated['response'];
+            $resources = $existingResources ? $existingResources . "\n\n" . $responseBlock : $responseBlock;
+
+            $event->learning->update([
+                'action_plan' => $event->learning->action_plan,
+                'next_time_strategy' => $event->learning->next_time_strategy,
+                'resources' => $resources,
+            ]);
+        } else {
+            $event->learning()->create([
+                'action_plan' => $validated['response'],
+                'next_time_strategy' => null,
+                'resources' => null,
+            ]);
+        }
+
+        return redirect()->route('events.show', $event)
+            ->with('success', 'AI response saved to learning.');
+    }
+
     public function community()
     {
         $events = Event::where('is_public', true)

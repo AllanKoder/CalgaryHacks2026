@@ -1,9 +1,11 @@
 import { Link } from '@inertiajs/react';
 import {
     BookOpen,
+    Brain,
     ClipboardList,
-    Folder,
+    Heart,
     LayoutGrid,
+    Lightbulb,
     Users,
 } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
@@ -45,6 +47,21 @@ const footerNavItems: NavItem[] = [
         title: 'About Reflective Practice',
         href: 'https://en.wikipedia.org/wiki/Reflective_practice',
         icon: BookOpen,
+    },
+    {
+        title: 'Borton\'s Framework',
+        href: 'https://en.wikipedia.org/wiki/Terry_Borton',
+        icon: Lightbulb,
+    },
+    {
+        title: 'Emotional Intelligence',
+        href: 'https://en.wikipedia.org/wiki/Emotional_intelligence',
+        icon: Heart,
+    },
+    {
+        title: 'Growth Mindset',
+        href: 'https://en.wikipedia.org/wiki/Mindset#Fixed_and_growth_mindset',
+        icon: Brain,
     },
 ];
 

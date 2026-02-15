@@ -21,7 +21,18 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(function () {
     Route::get('dashboard', function (Request $request) {
-        $userData = $request->user()?->userData;
+        $user = $request->user();
+        $userData = $user?->userData;
+        $lineChartHistory = $user?->scoreHistory()
+            ->orderBy('recorded_at')
+            ->get(['recorded_at', 'overall_score', 'delta'])
+            ->map(fn ($point) => [
+                'timestamp' => $point->recorded_at?->toIso8601String(),
+                'overall_score' => (float) $point->overall_score,
+                'delta' => (float) $point->delta,
+            ])
+            ->values()
+            ->all();
 
         return Inertia::render('dashboard', [
             'userData' => $userData
@@ -34,11 +45,14 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
                     'identityGrowth' => $userData->IdentityGrowth,
                 ]
                 : null,
+            'lineChartHistory' => $lineChartHistory,
         ]);
     })->name('dashboard');
 
     Route::resource('events', EventController::class);
     Route::post('events/{event}/make-public', [EventController::class, 'makePublic'])->name('events.makePublic');
+    Route::get('events/{event}/ai-consulting', [EventController::class, 'aiConsulting'])->name('events.ai-consulting');
+    Route::post('events/{event}/ai-consulting', [EventController::class, 'aiConsultingUpdate'])->name('events.ai-consulting.update');
 
     Route::get('events/{event}/identification/create', [IdentificationController::class, 'create'])->name('events.identification.create');
     Route::post('events/{event}/identification', [IdentificationController::class, 'store'])->name('events.identification.store');
