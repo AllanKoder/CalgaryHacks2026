@@ -29,6 +29,7 @@ class EventController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'focus' => 'nullable|string|max:50',
             'description' => 'required|string',
             'emotional_severity' => 'required|integer|min:1|max:5',
             'triggers' => 'nullable|string',
@@ -80,6 +81,7 @@ class EventController extends Controller
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'focus' => 'nullable|string|max:50',
             'description' => 'required|string',
             'emotional_severity' => 'required|integer|min:1|max:5',
             'triggers' => 'nullable|string',

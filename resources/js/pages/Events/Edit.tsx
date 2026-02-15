@@ -12,6 +12,7 @@ import { index as eventsIndex, update as eventsUpdate } from '@/routes/events';
 interface Event {
     id: number;
     title: string;
+    focus: string | null;
     description: string;
     emotional_severity: number;
     triggers: string | null;
@@ -46,6 +47,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Edit({ event }: Props) {
     const { data, setData, put, processing, errors } = useForm({
         title: event.title || '',
+        focus: event.focus || '',
         description: event.description,
         emotional_severity: event.emotional_severity,
         triggers: event.triggers || '',
@@ -96,6 +98,20 @@ export default function Edit({ event }: Props) {
                                 />
                                 {errors.title && (
                                     <p className="text-sm text-destructive mt-1">{errors.title}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="focus">Focus (1-2 words)</Label>
+                                <Input
+                                    id="focus"
+                                    value={data.focus}
+                                    onChange={(e) => setData('goal', e.target.value)}
+                                    placeholder="e.g., Career, Relationships, Health"
+                                    maxLength={50}
+                                />
+                                {errors.focus && (
+                                    <p className="text-sm text-destructive mt-1">{errors.focus}</p>
                                 )}
                             </div>
 
