@@ -12,6 +12,7 @@ class Event extends Model
 
     protected $fillable = [
         'user_id',
+        'is_public',
         'title',
         'focus',
         'description',
@@ -23,6 +24,7 @@ class Event extends Model
     ];
 
     protected $casts = [
+        'is_public' => 'boolean',
         'emotional_severity' => 'integer',
         'occurred_at' => 'date',
         'context' => 'array',
@@ -42,5 +44,10 @@ class Event extends Model
     public function learning()
     {
         return $this->hasOne(Learnings::class);
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }

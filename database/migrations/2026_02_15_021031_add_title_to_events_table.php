@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('events', function (Blueprint $table) {
             $table->string('title')->nullable()->after('user_id');
-            $table->string('goal');
+            $table->string('focus');
         });
     }
 
@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('events', function (Blueprint $table) {
             $table->dropColumn('title');
-            $table->dropColumn('goal');
+            $table->dropColumn('focus');
         });
     }
 };

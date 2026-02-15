@@ -6,17 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->renameColumn('goal', 'focus');
+            $table->boolean('is_public')->default(false)->after('user_id');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->renameColumn('focus', 'goal');
+            $table->dropColumn('is_public');
         });
     }
 };

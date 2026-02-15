@@ -9,6 +9,7 @@ import { MAIN_CATEGORY_LABELS, SUBCATEGORIES, type MainCategory } from '@/lib/ca
 
 interface Event {
     id: number;
+    is_public: boolean;
     title: string;
     focus: string | null;
     description: string;
@@ -70,6 +71,12 @@ export default function Show({ event }: Props) {
         }
     }
 
+    function handleMakePublic() {
+        if (confirm('This will share your event with the community. Continue?')) {
+            router.post(`/events/${event.id}/make-public`);
+        }
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Event Details" />
@@ -77,6 +84,14 @@ export default function Show({ event }: Props) {
                 <div className="flex justify-between items-center">
                     <h1 className="text-2xl font-bold">Event Details</h1>
                     <div className="flex gap-2">
+                        {!event.is_public && (
+                            <Button variant="outline" onClick={handleMakePublic}>
+                                Consult Community
+                            </Button>
+                        )}
+                        {event.is_public && (
+                            <Badge variant="secondary">Shared with Community</Badge>
+                        )}
                         <Link href={eventsEdit(event.id).url}>
                             <Button variant="outline">Edit</Button>
                         </Link>
@@ -352,12 +367,13 @@ export default function Show({ event }: Props) {
                                             <Button
                                                 variant="outline"
                                                 className="flex-1"
-                                                onClick={() => {}}
+                                                onClick={handleMakePublic}
+                                                disabled={event.is_public}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                                 </svg>
-                                                Consult Community
+                                                {event.is_public ? 'Shared with Community' : 'Consult Community'}
                                             </Button>
                                             <Button
                                                 variant="outline"

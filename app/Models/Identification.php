@@ -28,4 +28,9 @@ class Identification extends Model
     {
         return $this->belongsTo(Event::class);
     }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
 }

@@ -77,7 +77,7 @@ export default function Create() {
                                 <Input
                                     id="focus"
                                     value={data.focus}
-                                    onChange={(e) => setData('goal', e.target.value)}
+                                    onChange={(e) => setData('focus', e.target.value)}
                                     placeholder="e.g., Career, Relationships, Health"
                                     maxLength={50}
                                 />
