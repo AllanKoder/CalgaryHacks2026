@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserData;
+use App\Models\UserScoreHistory;
 use App\Services\FastApiClient;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Http;
@@ -70,6 +72,11 @@ class FastApiController extends Controller
                 if (is_array($labelScores)) {
                     $this->persistQuizScores($request, $labelScores);
                 }
+
+                $lineChartHistory = $payload['line_chart_history'] ?? $payload['lineChartHistory'] ?? null;
+                if (is_array($lineChartHistory)) {
+                    $this->persistLineChartHistory($request, $lineChartHistory);
+                }
             }
 
             return response()->json($payload, $resp->status());
@@ -132,6 +139,48 @@ class FastApiController extends Controller
         UserData::updateOrCreate(
             ['user_id' => $user->id],
             $values
+        );
+    }
+
+    private function persistLineChartHistory(Request $request, array $history): void
+    {
+        $user = $request->user();
+        if (! $user) {
+            return;
+        }
+
+        $rows = [];
+        foreach ($history as $point) {
+            if (! is_array($point)) {
+                continue;
+            }
+
+            $timestamp = $point['timestamp'] ?? null;
+            $overall = $point['overall_score'] ?? $point['overallScore'] ?? null;
+            $delta = $point['delta'] ?? null;
+
+            if (! $timestamp || ! is_numeric($overall) || ! is_numeric($delta)) {
+                continue;
+            }
+
+            $rows[] = [
+                'user_id' => $user->id,
+                'recorded_at' => Carbon::parse($timestamp)->utc(),
+                'overall_score' => round((float) $overall, 2),
+                'delta' => round((float) $delta, 2),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        if ($rows === []) {
+            return;
+        }
+
+        UserScoreHistory::upsert(
+            $rows,
+            ['user_id', 'recorded_at'],
+            ['overall_score', 'delta', 'updated_at']
         );
     }
 
