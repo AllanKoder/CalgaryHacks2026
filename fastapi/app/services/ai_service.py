@@ -1,9 +1,10 @@
+from enum import Enum
 import os
 from pathlib import Path
 
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 
 from app.data.quiz import QuizQuestion
 
@@ -17,6 +18,17 @@ def get_llm():
     return ChatGoogleGenerativeAI(
         model="gemini-2.5-flash",
         temperature=0.7,
+        api_key=api_key,
+    )
+
+
+def get_embeddings():
+    """Get Google Gemini embeddings model"""
+    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return None
+    return GoogleGenerativeAIEmbeddings(
+        model="models/text-embedding-004",
         api_key=api_key,
     )
 
@@ -81,7 +93,49 @@ async def generate_quiz_analysis(
         )
 
 
-from enum import Enum
+async def generate_embedding(text: str) -> list[float] | None:
+    """
+    Generate a 768-dimensional embedding vector for the given text using Google Gemini.
+
+    Args:
+        text: The text to embed
+
+    Returns:
+        A list of 768 floats, or None if the API is unavailable
+    """
+    embeddings_model = get_embeddings()
+    if embeddings_model is None:
+        return None
+
+    try:
+        # LangChain's embed_query returns a list of floats
+        vector = await embeddings_model.aembed_query(text)
+        return vector
+    except Exception as e:
+        print(f"Embedding generation error: {e}")
+        return None
+
+
+async def generate_embeddings_batch(texts: list[str]) -> list[list[float]] | None:
+    """
+    Generate embeddings for multiple texts in a batch.
+
+    Args:
+        texts: List of texts to embed
+
+    Returns:
+        List of embedding vectors, or None if the API is unavailable
+    """
+    embeddings_model = get_embeddings()
+    if embeddings_model is None:
+        return None
+
+    try:
+        vectors = await embeddings_model.aembed_documents(texts)
+        return vectors
+    except Exception as e:
+        print(f"Batch embedding generation error: {e}")
+        return None
 
 
 class Label(Enum):
@@ -138,7 +192,8 @@ class CognitiveClarity(SubLabelBase):
     HINDSIGHT_BIAS = ("hindsight_bias", 3)
     BANDWAGON_EFFECT = ("bandwagon_effect", 4)
     PROJECTION = ("projection", 5)
-    INDECISIVENESS_AND_DECISION_PARALYSIS = ("indecisiveness_and_decision_paralysis", 4)
+    INDECISIVENESS_AND_DECISION_PARALYSIS = (
+        "indecisiveness_and_decision_paralysis", 4)
 
     @property
     def label(self) -> Label:
@@ -218,7 +273,8 @@ class IdentityGrowth(SubLabelBase):
     IDENTITY_FRAGILITY = ("identity_fragility", 4)
     INABILITY_TO_ASK_FOR_HELP = ("inability_to_ask_for_help", 4)
     MATERIALISM_AND_STATUS_OBSESSION = ("materialism_and_status_obsession", 5)
-    SPIRITUAL_EXISTENTIAL_DISCONNECTION = ("spiritual_existential_disconnection", 4)
+    SPIRITUAL_EXISTENTIAL_DISCONNECTION = (
+        "spiritual_existential_disconnection", 4)
 
     @property
     def label(self) -> Label:

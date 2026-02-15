@@ -27,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->registerAuthEvents();
+        
+        // Register Event observer for Typesense auto-indexing
+        \App\Models\Event::observe(\App\Observers\EventObserver::class);
     }
 
     /**

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { dashboard, eventsIndex, eventsEdit, eventsDestroy, eventsIdentificationCreate, eventsIdentificationEdit, eventsLearningCreate, eventsLearningEdit } from '@/route-helpers';
 import { MAIN_CATEGORY_LABELS, SUBCATEGORIES, type MainCategory } from '@/lib/categories';
+import SimilarReflections from '@/components/SimilarReflections';
 
 interface Event {
     id: number;
@@ -448,6 +449,11 @@ export default function Show({ event }: Props) {
                         )}
                     </CardContent>
                 </Card>
+
+                {/* AI-Powered Similar Reflections */}
+                {event.identification && (
+                    <SimilarReflections eventId={event.id} />
+                )}
             </div>
         </AppLayout>
     );

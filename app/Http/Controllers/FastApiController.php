@@ -213,4 +213,95 @@ class FastApiController extends Controller
 
         return $key ?? $label;
     }
+
+    public function diagnosticStart(Request $request, FastApiClient $client)
+    {
+        $data = $request->validate([
+            'user_input' => ['required', 'string', 'max:5000'],
+        ]);
+
+        try {
+            $resp = $client->diagnosticStart($data['user_input']);
+            $payload = $resp->json();
+
+            if (! $resp->ok()) {
+                return response()->json([
+                    'message' => $payload['detail'] ?? 'Failed to start diagnostic.',
+                ], $resp->status());
+            }
+
+            return response()->json($payload);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to connect to AI service.',
+            ], 502);
+        }
+    }
+
+    public function diagnosticAnswer(Request $request, FastApiClient $client)
+    {
+        $data = $request->validate([
+            'state' => ['required', 'array'],
+            'answer' => ['required', 'string', 'max:5000'],
+        ]);
+
+        try {
+            $resp = $client->diagnosticAnswer($data['state'], $data['answer']);
+            $payload = $resp->json();
+
+            if (! $resp->ok()) {
+                return response()->json([
+                    'message' => $payload['detail'] ?? 'Failed to process answer.',
+                ], $resp->status());
+            }
+
+            // If the analysis is complete, persist the scores to the database
+            if (($payload['is_complete'] ?? false) && isset($payload['analysis'])) {
+                $this->persistDiagnosticAnalysis($request, $payload['analysis']);
+            }
+
+            return response()->json($payload);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to connect to AI service.',
+            ], 502);
+        }
+    }
+
+    private function persistDiagnosticAnalysis(Request $request, array $analysis): void
+    {
+        // Persist label scores to user_data table
+        $labelScores = $analysis['label_scores'] ?? null;
+        if (is_array($labelScores)) {
+            $this->persistQuizScores($request, $labelScores);
+        }
+
+        // Persist overall score to user_score_history table
+        $overallScore = $analysis['overall_score'] ?? null;
+        $timestamp = $analysis['timestamp'] ?? now()->toIso8601String();
+
+        if (is_numeric($overallScore)) {
+            $user = $request->user();
+            if (! $user) {
+                return;
+            }
+
+            // Calculate delta from last recorded score
+            $lastHistory = $user->scoreHistory()
+                ->orderByDesc('recorded_at')
+                ->first();
+
+            $delta = $lastHistory
+                ? round((float) $overallScore - (float) $lastHistory->overall_score, 2)
+                : 0.0;
+
+            $this->persistLineChartHistory($request, [
+                [
+                    'timestamp' => $timestamp,
+                    'overall_score' => $overallScore,
+                    'delta' => $delta,
+                ],
+            ]);
+        }
+    }
 }
