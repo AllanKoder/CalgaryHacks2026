@@ -87,11 +87,6 @@ export default function Show({ event }: Props) {
                         <p className="text-sm text-muted-foreground">Review and analyze your experience</p>
                     </div>
                     <div className="flex gap-2">
-                        {!event.is_public && (
-                            <Button variant="outline" onClick={handleMakePublic}>
-                                Consult Community
-                            </Button>
-                        )}
                         {event.is_public && (
                             <Badge variant="secondary">Shared with Community</Badge>
                         )}

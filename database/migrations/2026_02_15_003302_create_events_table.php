@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('emotional_severity');
             $table->text('analysis')->nullable();
 
+            $table->boolean('is_public')->default(false);
+
             $table->json('context')->nullable();
             $table->json('impact')->nullable();
             $table->timestamps();
