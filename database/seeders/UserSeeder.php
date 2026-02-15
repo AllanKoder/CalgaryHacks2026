@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
             'email' => 'test@test.com',
             'password' => Hash::make('password123'),
             'email_verified_at' => now(),
+            'is_first_time' => true,
             'is_therapist' => false,
         ]);
     }
