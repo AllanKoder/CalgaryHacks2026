@@ -29,55 +29,55 @@ const growthData = {
 };
 
 const growthStats = [
-    { label: 'Week 7', value: '49%' },
-    { label: 'Confidence', value: '63%' },
-    { label: 'Focus', value: '86%' },
+    { label: 'Emotional Mastery', value: '63%' },
+    { label: 'Cognitive Clarity', value: '58%' },
+    { label: 'Social & Relational', value: '71%' },
 ];
 
 const radarMetrics = [
-    { label: 'Rigour', value: 68 },
-    { label: 'Evidence', value: 66 },
-    { label: 'Counter', value: 61 },
-    { label: 'Assumptions', value: 57 },
-    { label: 'Bias', value: 53 },
-    { label: 'Sources', value: 64 },
+    { label: 'Emotional Mastery', value: 63 },
+    { label: 'Cognitive Clarity', value: 58 },
+    { label: 'Social & Relational', value: 71 },
+    { label: 'Ethical & Moral', value: 67 },
+    { label: 'Physical & Lifestyle', value: 54 },
+    { label: 'Identity & Growth', value: 60 },
 ];
 
 const kpis: KpiItem[] = [
     {
-        title: 'Average Confidence',
+        title: 'Emotional Mastery',
         value: '63%',
-        change: '+7%',
+        change: '+5%',
         trend: 'up',
     },
     {
-        title: 'Bias Rate',
-        value: '27%',
-        change: '-4%',
-        trend: 'down',
+        title: 'Cognitive Clarity',
+        value: '58%',
+        change: '+2%',
+        trend: 'up',
     },
     {
-        title: 'Calibration Score',
-        value: '49%',
+        title: 'Social & Relational',
+        value: '71%',
+        change: '+6%',
+        trend: 'up',
+    },
+    {
+        title: 'Ethical & Moral',
+        value: '67%',
         change: '+3%',
         trend: 'up',
     },
     {
-        title: 'Blindspots',
-        value: '29%',
+        title: 'Physical & Lifestyle',
+        value: '54%',
         change: '-2%',
         trend: 'down',
     },
     {
-        title: 'Decision Quality',
-        value: '+2',
-        change: '+1',
-        trend: 'up',
-    },
-    {
-        title: 'Revision Rate',
-        value: '8/10',
-        change: '+1',
+        title: 'Identity & Growth',
+        value: '60%',
+        change: '+4%',
         trend: 'up',
     },
 ];

@@ -1,5 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { BarChart3, BookOpen, ClipboardList, Folder, LayoutGrid, Users } from 'lucide-react';
+import {
+    BookOpen,
+    ClipboardList,
+    Folder,
+    LayoutGrid,
+    Users,
+} from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -12,9 +18,9 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { community, dashboard, eventsIndex } from '@/route-helpers';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
-import { analysis, community, dashboard, eventsIndex } from '@/route-helpers';
 
 const mainNavItems: NavItem[] = [
     {
@@ -26,11 +32,6 @@ const mainNavItems: NavItem[] = [
         title: 'Events',
         href: eventsIndex(),
         icon: ClipboardList,
-    },
-    {
-        title: 'Analysis',
-        href: analysis(),
-        icon: BarChart3,
     },
     {
         title: 'Community',

@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->string('title')->nullable()->after('user_id');
-            $table->string('goal');
+        Schema::create('comments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->morphs('commentable');
+            $table->text('content');
+            $table->timestamps();
         });
     }
 
@@ -22,9 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->dropColumn('title');
-            $table->dropColumn('goal');
-        });
+        Schema::dropIfExists('comments');
     }
 };
