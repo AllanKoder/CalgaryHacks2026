@@ -4,7 +4,11 @@ import type { BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { dashboard, eventsIndex, eventsEdit, eventsDestroy, eventsIdentificationCreate, eventsIdentificationEdit, eventsLearningCreate, eventsLearningEdit } from '@/routes';
+import { dashboard } from '@/routes';
+import { index as eventsIndex, edit as eventsEdit, destroy as eventsDestroy } from '@/routes/events';
+import { create as eventsIdentificationCreate, edit as eventsIdentificationEdit } from '@/routes/events/identification';
+import { create as eventsLearningCreate, edit as eventsLearningEdit } from '@/routes/events/learning';
+import { MAIN_CATEGORY_LABELS, SUBCATEGORIES, type MainCategory } from '@/lib/categories';
 
 interface Event {
     id: number;
@@ -31,6 +35,19 @@ interface Event {
     } | null;
     identification: {
         tag: string;
+        main_category: string | null;
+        sub_category: string | null;
+        assumptions: {
+            what_assumptions: string | null;
+            ignored_information: string | null;
+            protected_beliefs: string | null;
+        } | null;
+        pattern_recognition: {
+            noticed_before: string | null;
+            triggers: string | null;
+            personal_or_organizational: string | null;
+            common_thread: string | null;
+        } | null;
     } | null;
     learning: {
         action_plan: string;
@@ -191,13 +208,6 @@ export default function Show({ event }: Props) {
                                     <p className="text-sm text-muted-foreground">{event.impact.longer_term_consequences}</p>
                                 </div>
                             )}
-
-                            {event.impact?.impact_significance && (
-                                <div>
-                                    <h3 className="font-semibold mb-2">Impact Significance</h3>
-                                    <Badge variant="secondary">{event.impact.impact_significance}/10</Badge>
-                                </div>
-                            )}
                         </CardContent>
                     </Card>
                 )}
@@ -219,7 +229,106 @@ export default function Show({ event }: Props) {
                     </CardHeader>
                     <CardContent>
                         {event.identification ? (
-                            <Badge>{event.identification.tag}</Badge>
+                            <div className="space-y-6">
+
+                                {event.identification.main_category && (
+                                    <div className="space-y-2">
+                                        <h3 className="font-semibold text-sm text-muted-foreground">Category</h3>
+                                        <p className="text-sm">
+                                            {MAIN_CATEGORY_LABELS[event.identification.main_category as MainCategory]}
+                                            {event.identification.sub_category && (
+                                                <>
+                                                    {' → '}
+                                                    <Badge variant="secondary">
+                                                        {SUBCATEGORIES[event.identification.main_category as MainCategory]?.find(
+                                                            sub => sub.value === event.identification!.sub_category
+                                                        )?.label || event.identification.sub_category}
+                                                    </Badge>
+                                                </>
+                                            )}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {event.identification.assumptions && (
+                                    Object.values(event.identification.assumptions).some(val => val) && (
+                                        <div className="space-y-3">
+                                            <h3 className="font-semibold">Self-Awareness</h3>
+
+                                            {event.identification.assumptions.what_assumptions && (
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                                                        What assumptions did you make?
+                                                    </h4>
+                                                    <p className="text-sm">{event.identification.assumptions.what_assumptions}</p>
+                                                </div>
+                                            )}
+
+                                            {event.identification.assumptions.ignored_information && (
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                                                        What information did you ignore?
+                                                    </h4>
+                                                    <p className="text-sm">{event.identification.assumptions.ignored_information}</p>
+                                                </div>
+                                            )}
+
+                                            {event.identification.assumptions.protected_beliefs && (
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                                                        What beliefs were you protecting?
+                                                    </h4>
+                                                    <p className="text-sm">{event.identification.assumptions.protected_beliefs}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
+                                )}
+
+                                {event.identification.pattern_recognition && (
+                                    Object.values(event.identification.pattern_recognition).some(val => val) && (
+                                        <div className="space-y-3">
+                                            <h3 className="font-semibold">Pattern Recognition</h3>
+
+                                            {event.identification.pattern_recognition.noticed_before && (
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                                                        Have you noticed this before?
+                                                    </h4>
+                                                    <p className="text-sm">{event.identification.pattern_recognition.noticed_before}</p>
+                                                </div>
+                                            )}
+
+                                            {event.identification.pattern_recognition.triggers && (
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                                                        What triggers this?
+                                                    </h4>
+                                                    <p className="text-sm">{event.identification.pattern_recognition.triggers}</p>
+                                                </div>
+                                            )}
+
+                                            {event.identification.pattern_recognition.personal_or_organizational && (
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                                                        Personal or organizational?
+                                                    </h4>
+                                                    <p className="text-sm">{event.identification.pattern_recognition.personal_or_organizational}</p>
+                                                </div>
+                                            )}
+
+                                            {event.identification.pattern_recognition.common_thread && (
+                                                <div>
+                                                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                                                        Common thread
+                                                    </h4>
+                                                    <p className="text-sm">{event.identification.pattern_recognition.common_thread}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )
+                                )}
+                            </div>
                         ) : (
                             <p className="text-sm text-muted-foreground">
                                 No identification added yet.

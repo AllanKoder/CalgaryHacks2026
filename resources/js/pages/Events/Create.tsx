@@ -278,25 +278,6 @@ export default function Create() {
                                 )}
                             </div>
 
-                            <div>
-                                <Label htmlFor="impact_significance">
-                                    Impact Significance (1-10)
-                                </Label>
-                                <p className="text-xs text-muted-foreground mb-2">
-                                    1 = Minimal impact • 10 = Severe, far-reaching impact
-                                </p>
-                                <Input
-                                    id="impact_significance"
-                                    type="number"
-                                    min="1"
-                                    max="10"
-                                    value={data.impact.impact_significance}
-                                    onChange={(e) => setData('impact', { ...data.impact, impact_significance: parseInt(e.target.value) })}
-                                />
-                                {errors['impact.impact_significance'] && (
-                                    <p className="text-sm text-destructive mt-1">{errors['impact.impact_significance']}</p>
-                                )}
-                            </div>
                         </CardContent>
                     </Card>
 

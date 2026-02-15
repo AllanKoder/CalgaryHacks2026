@@ -55,7 +55,8 @@ class CognitiveClarity(SubLabelBase):
     HINDSIGHT_BIAS = ("hindsight_bias", 3)
     BANDWAGON_EFFECT = ("bandwagon_effect", 4)
     PROJECTION = ("projection", 5)
-    INDECISIVENESS_AND_DECISION_PARALYSIS = ("indecisiveness_and_decision_paralysis", 4)
+    INDECISIVENESS_AND_DECISION_PARALYSIS = (
+        "indecisiveness_and_decision_paralysis", 4)
 
     @property
     def label(self) -> Label:
@@ -135,7 +136,8 @@ class IdentityGrowth(SubLabelBase):
     IDENTITY_FRAGILITY = ("identity_fragility", 4)
     INABILITY_TO_ASK_FOR_HELP = ("inability_to_ask_for_help", 4)
     MATERIALISM_AND_STATUS_OBSESSION = ("materialism_and_status_obsession", 5)
-    SPIRITUAL_EXISTENTIAL_DISCONNECTION = ("spiritual_existential_disconnection", 4)
+    SPIRITUAL_EXISTENTIAL_DISCONNECTION = (
+        "spiritual_existential_disconnection", 4)
 
     @property
     def label(self) -> Label:

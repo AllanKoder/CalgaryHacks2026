@@ -33,9 +33,9 @@ class IdentificationController extends Controller
         }
 
         $validated = $request->validate([
-            'tag' => 'required|string',
-            'main_category' => 'nullable|string',
-            'sub_category' => 'nullable|string',
+            'tag' => 'nullable|string',
+            'main_category' => 'required|string',
+            'sub_category' => 'required|string',
             'assumptions' => 'nullable|array',
             'assumptions.what_assumptions' => 'nullable|string',
             'assumptions.ignored_information' => 'nullable|string',
@@ -46,6 +46,11 @@ class IdentificationController extends Controller
             'pattern_recognition.personal_or_organizational' => 'nullable|string',
             'pattern_recognition.common_thread' => 'nullable|string',
         ]);
+        
+        // Auto-generate tag from sub_category if not provided
+        if (empty($validated['tag'])) {
+            $validated['tag'] = $validated['sub_category'];
+        }
 
         $event->identification()->create($validated);
 
@@ -78,9 +83,9 @@ class IdentificationController extends Controller
         }
 
         $validated = $request->validate([
-            'tag' => 'required|string',
-            'main_category' => 'nullable|string',
-            'sub_category' => 'nullable|string',
+            'tag' => 'nullable|string',
+            'main_category' => 'required|string',
+            'sub_category' => 'required|string',
             'assumptions' => 'nullable|array',
             'assumptions.what_assumptions' => 'nullable|string',
             'assumptions.ignored_information' => 'nullable|string',
@@ -91,6 +96,11 @@ class IdentificationController extends Controller
             'pattern_recognition.personal_or_organizational' => 'nullable|string',
             'pattern_recognition.common_thread' => 'nullable|string',
         ]);
+        
+        // Auto-generate tag from sub_category if not provided
+        if (empty($validated['tag'])) {
+            $validated['tag'] = $validated['sub_category'];
+        }
 
         $event->identification->update($validated);
 
