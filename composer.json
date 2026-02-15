@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/react-starter-kit",
+    "name": "revibe/reflective-practice",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "ReVibe - A digital reflective practice journal for structured learning and growth",
     "keywords": [
-        "laravel",
-        "framework"
+        "reflective-practice",
+        "learning",
+        "experiential-learning",
+        "personal-development"
     ],
     "license": "MIT",
     "require": {

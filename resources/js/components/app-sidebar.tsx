@@ -29,7 +29,7 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Events',
+        title: 'My Reflections',
         href: eventsIndex(),
         icon: ClipboardList,
     },
@@ -42,13 +42,8 @@ const mainNavItems: NavItem[] = [
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
+        title: 'About Reflective Practice',
+        href: 'https://en.wikipedia.org/wiki/Reflective_practice',
         icon: BookOpen,
     },
 ];

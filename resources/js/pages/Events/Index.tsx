@@ -27,18 +27,21 @@ interface Props {
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
-    { title: 'Events', href: eventsIndex().url },
+    { title: 'My Reflections', href: eventsIndex().url },
 ];
 
 export default function Index({ events }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="My Events" />
+            <Head title="My Reflections" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Self-Critical Analysis</h1>
+                    <div>
+                        <h1 className="text-2xl font-bold">My Reflections</h1>
+                        <p className="text-sm text-muted-foreground">Document and learn from your experiences</p>
+                    </div>
                     <Link href={eventsCreate().url}>
-                        <Button>Record New Event</Button>
+                        <Button>New Reflection</Button>
                     </Link>
                 </div>
 
@@ -47,7 +50,7 @@ export default function Index({ events }: Props) {
                         <Card>
                             <CardContent className="p-6">
                                 <p className="text-center text-muted-foreground">
-                                    No events recorded yet. Start your self-reflection journey!
+                                    No reflections yet. Begin your reflective practice journey!
                                 </p>
                             </CardContent>
                         </Card>

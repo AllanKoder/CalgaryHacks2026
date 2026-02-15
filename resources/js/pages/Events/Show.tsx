@@ -79,10 +79,13 @@ export default function Show({ event }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Event Details" />
+            <Head title="Reflection Details" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Event Details</h1>
+                    <div>
+                        <h1 className="text-2xl font-bold">Reflection Details</h1>
+                        <p className="text-sm text-muted-foreground">Review and analyze your experience</p>
+                    </div>
                     <div className="flex gap-2">
                         {!event.is_public && (
                             <Button variant="outline" onClick={handleMakePublic}>
@@ -235,7 +238,7 @@ export default function Show({ event }: Props) {
                 <Card>
                     <CardHeader>
                         <div className="flex justify-between items-center">
-                            <CardTitle>Identification</CardTitle>
+                            <CardTitle>Reflection & Analysis (So What?)</CardTitle>
                             {event.identification ? (
                                 <Link href={eventsIdentificationEdit(event.id).url}>
                                     <Button variant="outline" size="sm">Edit</Button>

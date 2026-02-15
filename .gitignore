@@ -29,3 +29,15 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Python cache files (comprehensive)
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/

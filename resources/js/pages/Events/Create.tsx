@@ -11,8 +11,8 @@ import { index as eventsIndex, create as eventsCreate, store as eventsStore } fr
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
-    { title: 'Events', href: eventsIndex().url },
-    { title: 'Create', href: eventsCreate().url },
+    { title: 'My Reflections', href: eventsIndex().url },
+    { title: 'New Reflection', href: eventsCreate().url },
 ];
 
 export default function Create() {
@@ -47,15 +47,18 @@ export default function Create() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Record an Event" />
+            <Head title="New Reflection" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <h1 className="text-2xl font-bold">Record an Event</h1>
+                <div>
+                    <h1 className="text-2xl font-bold">New Reflection</h1>
+                    <p className="text-sm text-muted-foreground">Step 1: What happened?</p>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Basic Information</CardTitle>
-                            <CardDescription>What happened?</CardDescription>
+                            <CardTitle>Document Your Experience</CardTitle>
+                            <CardDescription>Capture the key details of what occurred</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
