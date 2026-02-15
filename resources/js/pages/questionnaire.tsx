@@ -86,16 +86,26 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
         if (isLastQuestion) {
             if (isSubmitting) return;
             setIsSubmitting(true);
+            let shouldComplete = false;
             try {
                 const csrfToken = document
                     .querySelector('meta[name="csrf-token"]')
                     ?.getAttribute('content');
+                const xsrfToken = document.cookie
+                    .split('; ')
+                    .find((row) => row.startsWith('XSRF-TOKEN='))
+                    ?.split('=')[1];
                 const response = await fetch('/questionnaire/score', {
                     method: 'POST',
-                    credentials: 'same-origin',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
                         ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
+                        ...(xsrfToken
+                            ? { 'X-XSRF-TOKEN': decodeURIComponent(xsrfToken) }
+                            : {}),
                     },
                     body: JSON.stringify({
                         answers,
@@ -114,6 +124,7 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
                     } else {
                         console.log('Quiz scores:', data);
                     }
+                    shouldComplete = true;
                 } else {
                     console.warn(
                         'Failed to fetch quiz scores:',
@@ -123,7 +134,11 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
             } catch (error) {
                 console.error('Failed to fetch quiz scores:', error);
             } finally {
-                router.post('/questionnaire/complete');
+                if (shouldComplete) {
+                    router.post('/questionnaire/complete');
+                } else {
+                    setIsSubmitting(false);
+                }
             }
             return;
         }
