@@ -15,6 +15,14 @@ Route::get('dashboard', function () {
     return Inertia::render('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('analysis', function () {
+    return Inertia::render('analysis');
+})->middleware(['auth', 'verified'])->name('analysis');
+
+Route::get('community', function () {
+    return Inertia::render('community');
+})->middleware(['auth', 'verified'])->name('community');
+
 Route::get('/fastapi-test', [FastApiController::class, 'info'])->name('fastapi.test');
 
 require __DIR__ . '/settings.php';
