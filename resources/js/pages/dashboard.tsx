@@ -1,8 +1,4 @@
 import { Head } from '@inertiajs/react';
-import {
-    CommunityPreviewCard,
-    type CommunityItem,
-} from '@/components/dashboard/community-preview-card';
 import { DashboardHero } from '@/components/dashboard/dashboard-hero';
 import { GrowthCard } from '@/components/dashboard/growth-card';
 import type { KpiItem } from '@/components/dashboard/kpi-grid';
@@ -98,29 +94,6 @@ const kpis: KpiItem[] = [
     },
 ];
 
-const communityItems: CommunityItem[] = [
-    {
-        title: 'Did I fall for cherry-picked stats about recovery?',
-        author: 'MattL',
-        time: '8h ago',
-        tag: 'Cognitive Bias',
-        replies: 14,
-    },
-    {
-        title: 'Help me decide: grad school vs. full-time work',
-        author: 'DataJunkie',
-        time: '2d ago',
-        tag: 'Decision Lab',
-        replies: 22,
-    },
-    {
-        title: 'Evaluating climate projections with uncertainty',
-        author: 'Kira',
-        time: '4d ago',
-        tag: 'Evidence Review',
-        replies: 9,
-    },
-];
 
 export default function Dashboard({
     userData,
@@ -148,24 +121,21 @@ export default function Dashboard({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="min-h-full bg-[radial-gradient(circle_at_top,_rgba(20,184,166,0.14),_transparent_45%),radial-gradient(circle_at_20%_20%,_rgba(14,116,144,0.14),_transparent_40%)]">
-                <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
+            <div className="min-h-[calc(100svh-4rem)] bg-[radial-gradient(circle_at_top,_rgba(20,184,166,0.14),_transparent_45%),radial-gradient(circle_at_20%_20%,_rgba(14,116,144,0.14),_transparent_40%)] lg:h-[calc(100svh-4rem)] lg:overflow-hidden">
+                <div className="mx-auto flex h-full w-full max-w-7xl flex-col gap-4 px-4 py-4">
                     <DashboardHero name="Andrew" />
 
-                    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
-                        <div className="flex flex-col gap-6">
+                    <div className="grid h-full min-h-0 gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
+                        <div className="flex min-h-0 flex-col gap-4">
                             <GrowthCard
                                 data={growthData}
                                 metrics={kpis}
-                            />
-                            <CommunityPreviewCard
-                                items={communityItems}
-                                maxItems={2}
+                                className="h-full"
                             />
                         </div>
 
-                        <div className="flex flex-col gap-6">
-                            <RigourCard metrics={radarMetrics} />
+                        <div className="flex min-h-0 flex-col gap-4">
+                            <RigourCard metrics={radarMetrics} className="h-full" />
                         </div>
                     </div>
                 </div>

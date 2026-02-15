@@ -2,13 +2,15 @@ import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 import { useMemo } from 'react';
 import { LineAreaChart, type LineAreaChartData } from '@/components/charts/line-area-chart';
 import { KpiGrid, type KpiItem } from '@/components/dashboard/kpi-grid';
+import { cn } from '@/lib/utils';
 
 type GrowthCardProps = {
     data: LineAreaChartData;
     metrics?: KpiItem[];
+    className?: string;
 };
 
-export function GrowthCard({ data, metrics = [] }: GrowthCardProps) {
+export function GrowthCard({ data, metrics = [], className }: GrowthCardProps) {
     const seriesValues = useMemo(() => {
         if (Array.isArray(data)) {
             if (data.length === 0) {
@@ -56,7 +58,12 @@ export function GrowthCard({ data, metrics = [] }: GrowthCardProps) {
     const isPositive = momentum >= 0;
 
     return (
-        <div className="rounded-2xl border border-border/60 bg-card/70 p-5 shadow-sm backdrop-blur">
+        <div
+            className={cn(
+                'flex h-full flex-col rounded-2xl border border-border/60 bg-card/70 p-5 shadow-sm backdrop-blur',
+                className,
+            )}
+        >
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -79,17 +86,18 @@ export function GrowthCard({ data, metrics = [] }: GrowthCardProps) {
                 </div>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-4 flex-1 min-h-[240px]">
                 <LineAreaChart
                     data={data}
                     className="h-full"
+                    height={260}
                     smoothWindow={5}
                     labelCount={3}
                 />
             </div>
 
             {metrics.length > 0 && (
-                <div className="mt-5">
+                <div className="mt-4">
                     <KpiGrid items={metrics} />
                 </div>
             )}

@@ -62,10 +62,6 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
         return Object.values(buckets);
     }, [answers, questions]);
 
-    const nextLabel = currentQuestion
-        ? labelMap[currentQuestion.label] ?? currentQuestion.label
-        : undefined;
-
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Questionnaire',
@@ -172,7 +168,7 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
                         </div>
                     ) : (
                         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-                            <div className="flex flex-col gap-6">
+                            <div className="flex flex-col gap-6 lg:min-h-[560px]">
                                 {currentQuestion && (
                                     <QuestionCard
                                         question={currentQuestion}
@@ -187,19 +183,22 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
                                     />
                                 )}
 
-                                <QuestionnaireActions
-                                    canGoBack={activeIndex > 0}
-                                    canGoNext={!!currentQuestion && !isSubmitting}
-                                    isLast={isLastQuestion}
-                                    onBack={handleBack}
-                                    onNext={handleNext}
-                                />
+                                <div className="mt-auto">
+                                    <QuestionnaireActions
+                                        canGoBack={activeIndex > 0}
+                                        canGoNext={
+                                            !!currentQuestion && !isSubmitting
+                                        }
+                                        isLast={isLastQuestion}
+                                        onBack={handleBack}
+                                        onNext={handleNext}
+                                    />
+                                </div>
                             </div>
 
                             <QuestionnaireSidebar
                                 total={total}
                                 completed={completed}
-                                nextLabel={nextLabel}
                                 sections={sections}
                             />
                         </div>

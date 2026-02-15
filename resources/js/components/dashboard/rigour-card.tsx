@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { RadarChart } from '@/components/charts/radar-chart';
+import { cn } from '@/lib/utils';
 
 type RigourMetric = {
     label: string;
@@ -10,19 +11,26 @@ type RigourCardProps = {
     metrics: RigourMetric[];
     status?: string;
     title?: string;
+    className?: string;
 };
 
 export function RigourCard({
     metrics,
     status = 'Updated today',
     title = 'Insight Score',
+    className,
 }: RigourCardProps) {
     const score = Math.round(
         metrics.reduce((sum, metric) => sum + metric.value, 0) / metrics.length,
     );
 
     return (
-        <div className="rounded-2xl border border-border/60 bg-card/70 p-5 shadow-sm backdrop-blur">
+        <div
+            className={cn(
+                'flex h-full flex-col rounded-2xl border border-border/60 bg-card/70 p-5 shadow-sm backdrop-blur',
+                className,
+            )}
+        >
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -45,14 +53,15 @@ export function RigourCard({
                 </Badge>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-4 flex-1 min-h-0">
                 <RadarChart
                     metrics={metrics}
-                    size={320}
-                    padding={48}
+                    size={360}
+                    padding={52}
                     labelOffset={20}
                     showValues={false}
                     maxLabelChars={12}
+                    className="h-full"
                 />
             </div>
         </div>

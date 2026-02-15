@@ -294,10 +294,10 @@ export function LineAreaChart({
     }, [axisDates, axisKeys, hoverIndex, points, values]);
 
     return (
-        <div className={cn('relative w-full', className)}>
+        <div className={cn('relative flex h-full w-full flex-col', className)}>
             <svg
                 viewBox={`0 0 ${width} ${height}`}
-                className="h-48 w-full"
+                className="w-full flex-1 min-h-0"
                 preserveAspectRatio="none"
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
@@ -411,7 +411,7 @@ export function LineAreaChart({
             )}
 
             {axisLabels.length > 0 && (
-                <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground/80">
+                <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground/80">
                     {axisLabels.map((label, index) => (
                         <span
                             key={`${label}-${index}`}

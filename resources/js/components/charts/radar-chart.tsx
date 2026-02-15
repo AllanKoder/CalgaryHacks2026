@@ -141,7 +141,7 @@ export function RadarChart({
         <div className={cn('w-full', className)}>
             <svg
                 viewBox={`0 0 ${size} ${size}`}
-                className="h-auto w-full"
+                className="h-full w-full"
                 role="img"
             >
                 <defs>
