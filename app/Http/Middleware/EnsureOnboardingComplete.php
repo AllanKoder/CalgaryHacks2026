@@ -23,7 +23,7 @@ class EnsureOnboardingComplete
             return $next($request);
         }
 
-        if ($request->routeIs('questionnaire', 'questionnaire.complete')) {
+        if ($request->routeIs('questionnaire', 'questionnaire.complete', 'questionnaire.score')) {
             return $next($request);
         }
 

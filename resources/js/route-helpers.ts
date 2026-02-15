@@ -9,6 +9,7 @@ import {
     register,
 } from '@/routes';
 import events from '@/routes/events';
+import comments from '@/routes/comments';
 
 export {
     community,
@@ -19,6 +20,7 @@ export {
     questionnaire,
     register,
     events,
+    comments,
 };
 
 export const eventsIndex = events.index;
@@ -40,3 +42,6 @@ export const eventsLearningStore = events.learning.store;
 export const eventsLearningEdit = events.learning.edit;
 export const eventsLearningUpdate = events.learning.update;
 export const eventsLearningDestroy = events.learning.destroy;
+
+export const commentsStore = comments.store;
+export const commentsIndex = comments.index;
