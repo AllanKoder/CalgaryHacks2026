@@ -1,11 +1,11 @@
 import { Head } from '@inertiajs/react';
-import Comments from '@/components/Comments';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
-import { MAIN_CATEGORY_LABELS, SUBCATEGORIES, type MainCategory } from '@/lib/categories';
-import { dashboard } from '@/route-helpers';
 import type { BreadcrumbItem } from '@/types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { MAIN_CATEGORY_LABELS, SUBCATEGORIES, type MainCategory } from '@/lib/categories';
+import Comments from '@/components/Comments';
+import { dashboard } from '@/route-helpers';
 
 interface User {
     id: number;
