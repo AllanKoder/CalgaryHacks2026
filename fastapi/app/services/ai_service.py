@@ -1,6 +1,6 @@
-from enum import Enum
 import os
 from pathlib import Path
+from enum import Enum
 
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
@@ -28,7 +28,7 @@ def get_embeddings():
     if not api_key:
         return None
     return GoogleGenerativeAIEmbeddings(
-        model="models/text-embedding-004",
+        model="models/gemini-embedding-001",
         api_key=api_key,
     )
 

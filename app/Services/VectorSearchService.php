@@ -66,23 +66,18 @@ class VectorSearchService
     public function findSimilar(Event $event, int $limit = 5): array
     {
         try {
-            // If this event doesn't have an embedding, generate one
-            if (!$event->embedding) {
-                $fullText = $this->buildFullText($event);
-                $embedding = $this->generateEmbedding($fullText);
-                
-                if (!$embedding) {
-                    return $this->fallbackTextSearch($event, $limit);
-                }
-            } else {
-                $embedding = is_string($event->embedding) 
-                    ? json_decode($event->embedding, true) 
-                    : $event->embedding;
+            $embedding = is_string($event->embedding)
+                ? json_decode($event->embedding, true)
+                : $event->embedding;
+
+            // If no embedding exists, return empty array (no fulltext fallback)
+            if (!$embedding) {
+                return [];
             }
 
             // Find similar events using cosine similarity
             $similar = $this->cosineSimilaritySearch($event->user_id, $event->id, $embedding, $limit);
-            
+
             return $similar;
         } catch (\Exception $e) {
             Log::error('Vector search failed: ' . $e->getMessage());
@@ -160,35 +155,6 @@ class VectorSearchService
     }
 
     /**
-     * Fallback text search when embeddings are not available
-     */
-    private function fallbackTextSearch(Event $event, int $limit): array
-    {
-        $searchTerms = $event->description;
-
-        $events = Event::where('user_id', $event->user_id)
-            ->where('id', '!=', $event->id)
-            ->where(function ($query) use ($searchTerms) {
-                $query->where('description', 'LIKE', "%{$searchTerms}%")
-                    ->orWhere('title', 'LIKE', "%{$searchTerms}%");
-            })
-            ->with('identification')
-            ->limit($limit)
-            ->get();
-
-        return $events->map(function ($e) {
-            return [
-                'id' => $e->id,
-                'title' => $e->title,
-                'description' => $e->description,
-                'category' => $e->identification->main_category ?? null,
-                'text_score' => 0.5,
-                'created_at' => $e->created_at->timestamp,
-            ];
-        })->toArray();
-    }
-
-    /**
      * Build full text representation for embedding
      */
     private function buildFullText(Event $event): string
@@ -213,8 +179,9 @@ class VectorSearchService
             
             if ($ident->assumptions) {
                 $assumptions = is_array($ident->assumptions) ? $ident->assumptions : json_decode($ident->assumptions, true);
-                if ($assumptions && isset($assumptions['what_assumptions'])) {
-                    $parts[] = "Assumptions: {$assumptions['what_assumptions']}";
+                if ($assumptions) {
+                    $assumptionsText = is_array($assumptions) ? implode(', ', $assumptions) : $assumptions;
+                    $parts[] = "Assumptions: {$assumptionsText}";
                 }
             }
         }
