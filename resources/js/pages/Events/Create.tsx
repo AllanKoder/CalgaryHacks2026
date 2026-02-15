@@ -19,6 +19,7 @@ export default function Create() {
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         description: '',
+        focus: '',
         emotional_severity: 3,
         triggers: '',
         occurred_at: '',
@@ -68,6 +69,20 @@ export default function Create() {
                                 />
                                 {errors.title && (
                                     <p className="text-sm text-destructive mt-1">{errors.title}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="focus">Focus (1-2 words)</Label>
+                                <Input
+                                    id="focus"
+                                    value={data.focus}
+                                    onChange={(e) => setData('goal', e.target.value)}
+                                    placeholder="e.g., Career, Relationships, Health"
+                                    maxLength={50}
+                                />
+                                {errors.focus && (
+                                    <p className="text-sm text-destructive mt-1">{errors.focus}</p>
                                 )}
                             </div>
 
