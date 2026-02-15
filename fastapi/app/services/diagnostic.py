@@ -20,7 +20,7 @@ from app.label import (
     SubLabelBase,
 )
 
-load_dotenv(Path(__file__).resolve().parents[2] / ".env")
+load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 
 LABEL_TO_SUBLABEL_ENUM = {
     Label.EMOTIONAL_MASTERY: EmotionalMastery,
@@ -72,14 +72,92 @@ async def generate_primary_question() -> str:
         return "What is the main challenge or problem you're currently facing in your life?"
 
 
+def _build_event_context_str(event_context: Optional[Dict[str, Any]]) -> str:
+    """Build a human-readable string from the event/reflection context dict."""
+    if not event_context:
+        return ""
+
+    parts = ["REFLECTION / EVENT CONTEXT (the situation the user is reflecting on):"]
+    if event_context.get("title"):
+        parts.append(f"- Title: {event_context['title']}")
+    if event_context.get("focus"):
+        parts.append(f"- Focus Area: {event_context['focus']}")
+    if event_context.get("description"):
+        parts.append(f"- Description: {event_context['description']}")
+    if event_context.get("emotional_severity"):
+        parts.append(f"- Emotional Severity: {event_context['emotional_severity']}/5")
+    if event_context.get("triggers"):
+        parts.append(f"- Triggers: {event_context['triggers']}")
+    if event_context.get("occurred_at"):
+        parts.append(f"- Occurred At: {event_context['occurred_at']}")
+
+    ctx = event_context.get("context")
+    if isinstance(ctx, dict):
+        for key, val in ctx.items():
+            if val:
+                label = key.replace("_", " ").title()
+                parts.append(f"- {label}: {val}")
+
+    impact = event_context.get("impact")
+    if isinstance(impact, dict):
+        for key, val in impact.items():
+            if val:
+                label = key.replace("_", " ").title()
+                parts.append(f"- {label}: {val}")
+
+    ident = event_context.get("identification")
+    if isinstance(ident, dict):
+        if ident.get("tag"):
+            parts.append(f"- Category Tag: {ident['tag']}")
+        if ident.get("main_category"):
+            parts.append(f"- Main Category: {ident['main_category']}")
+        if ident.get("sub_category"):
+            parts.append(f"- Sub Category: {ident['sub_category']}")
+        if ident.get("assumptions"):
+            parts.append(f"- Assumptions: {json.dumps(ident['assumptions'])}")
+        if ident.get("pattern_recognition"):
+            parts.append(f"- Pattern Recognition: {json.dumps(ident['pattern_recognition'])}")
+
+    learning = event_context.get("learning")
+    if isinstance(learning, dict):
+        if learning.get("action_plan"):
+            parts.append(f"- Action Plan: {learning['action_plan']}")
+        if learning.get("next_time_strategy"):
+            parts.append(f"- Next Time Strategy: {learning['next_time_strategy']}")
+
+    return "\n".join(parts) + "\n"
+
+
+def _build_scores_context_str(current_scores: Optional[Dict[str, float]]) -> str:
+    """Build a human-readable string from the user's current label scores."""
+    if not current_scores:
+        return ""
+
+    label_names = {
+        "emotional_mastery": "Emotional Mastery",
+        "cognitive_clarity": "Cognitive Clarity",
+        "social_relational": "Social & Relational",
+        "ethical_moral": "Ethical & Moral",
+        "physical_lifestyle": "Physical & Lifestyle",
+        "identity_growth": "Identity & Growth",
+    }
+    lines = ["USER'S CURRENT PSYCHOLOGICAL PROFILE (scores 0-100, higher is healthier):"]
+    for key, score in current_scores.items():
+        display = label_names.get(key, key)
+        lines.append(f"- {display}: {score}/100")
+    return "\n".join(lines) + "\n"
+
+
 async def generate_follow_up_questions(
     primary_question: str,
     primary_answer: str,
     conversation_history: List[Dict[str, str]] = None,
+    current_scores: Optional[Dict[str, float]] = None,
+    event_context: Optional[Dict[str, Any]] = None,
 ) -> List[str]:
     """
-    Generate 3-5 critical thinking follow-up questions based on the user's primary answer.
-    These questions help assess specific labels and sublabels.
+    Generate 3-5 critical thinking follow-up questions based on the user's answer,
+    their existing psychological profile, and the reflection/event they are consulting about.
     """
     llm = get_llm()
     if llm is None:
@@ -94,8 +172,15 @@ async def generate_follow_up_questions(
         for msg in conversation_history:
             conversation_context += f"Q: {msg['question']}\nA: {msg['answer']}\n\n"
 
+    scores_context = _build_scores_context_str(current_scores)
+    event_context_str = _build_event_context_str(event_context)
+
     prompt = ChatPromptTemplate.from_template("""
         You are a psychologist conducting a diagnostic interview.
+
+        {event_context_str}
+
+        {scores_context}
 
         Initial Question: {primary_question}
         User's Answer: {primary_answer}
@@ -103,10 +188,11 @@ async def generate_follow_up_questions(
         Previous Conversation:
         {conversation_context}
 
-        Based on their response, generate 3-5 critical thinking follow-up questions that:
-        1. Dig deeper into specific areas of concern
-        2. Assess emotional regulation, cognitive patterns, relationships, lifestyle, and identity
-        3. Help distinguish between different psychological domains
+        Based on the reflection context, their existing psychological profile, and their response,
+        generate 3-5 critical thinking follow-up questions that:
+        1. Reference specific details from their reflection (triggers, context, impact)
+        2. Dig deeper into areas where their profile shows lower scores
+        3. Assess emotional regulation, cognitive patterns, relationships, lifestyle, and identity
         4. Are specific and actionable (avoid generic questions)
         5. Build on what they've already shared
 
@@ -123,6 +209,8 @@ async def generate_follow_up_questions(
                 "primary_question": primary_question,
                 "primary_answer": primary_answer,
                 "conversation_context": conversation_context,
+                "scores_context": scores_context,
+                "event_context_str": event_context_str,
             }
         )
 
@@ -148,12 +236,16 @@ async def generate_follow_up_questions(
 
 async def analyze_conversation_and_score(
     conversation_history: List[Dict[str, str]],
+    current_scores: Optional[Dict[str, float]] = None,
+    event_context: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Analyze the complete conversation and generate:
     1. Scores for each label (0-100)
     2. Scores for relevant sublabels (0-100)
     3. A comprehensive summary
+    current_scores provides the user's existing profile as a baseline.
+    event_context provides the full reflection/event the user is consulting about.
     """
     llm = get_llm()
     if llm is None:
@@ -175,8 +267,23 @@ async def analyze_conversation_and_score(
                 "severity": member.severity,
             }
 
+    scores_context = _build_scores_context_str(current_scores)
+    if scores_context:
+        scores_context += (
+            "\nIMPORTANT: Use these previous scores as a baseline. Your new scores should reflect "
+            "how this conversation changes or confirms the user's profile. If the conversation "
+            "reveals growth in an area, the score should increase. If it reveals new struggles, "
+            "the score should decrease. For areas not discussed, keep scores close to the baseline.\n"
+        )
+
+    event_context_str = _build_event_context_str(event_context)
+
     prompt = ChatPromptTemplate.from_template("""
         You are an expert psychologist analyzing a diagnostic conversation.
+
+        {event_context_str}
+
+        {scores_context}
 
         CONVERSATION TRANSCRIPT:
         {transcript}
@@ -194,7 +301,9 @@ async def analyze_conversation_and_score(
         {sublabels}
 
         TASK:
-        Analyze the conversation and provide scores based on what the user revealed.
+        Analyze the reflection context AND the conversation to provide updated scores.
+        The reflection details (description, triggers, context, impact, severity) are
+        critical evidence — weigh them alongside the conversation responses.
 
         SCORING GUIDELINES (0-100 scale):
         - 80-100: Strong/Healthy - Clear strengths, good functioning
@@ -204,7 +313,9 @@ async def analyze_conversation_and_score(
         - 0-19: Critical - Severe issues requiring immediate support
 
         Consider:
-        - Direct statements about struggles or strengths
+        - The user's existing scores as a starting point
+        - The reflection event details (severity, triggers, context, impact)
+        - Direct statements about struggles or strengths in the conversation
         - Patterns in their responses (avoidance, blame, insight, etc.)
         - Impact on their life (mild inconvenience vs major dysfunction)
         - Duration and persistence of issues
@@ -222,14 +333,14 @@ async def analyze_conversation_and_score(
             }},
             "sublabel_scores": {{
                 "sublabel_name": float (0-100),
-                // Include 3-8 most relevant sublabels based on conversation
+                // Include 3-8 most relevant sublabels based on conversation and reflection
             }},
             "summary": {{
-                "overall_assessment": "2-3 sentences about their current state",
+                "overall_assessment": "2-3 sentences about their current state based on both the reflection and conversation",
                 "key_insights": [
-                    "Specific insight 1 from their responses",
-                    "Specific insight 2 from their responses",
-                    "Specific insight 3 from their responses"
+                    "Specific insight 1 from their reflection and responses",
+                    "Specific insight 2 from their reflection and responses",
+                    "Specific insight 3 from their reflection and responses"
                 ],
                 "primary_concerns": [
                     "Most urgent concern area",
@@ -244,17 +355,22 @@ async def analyze_conversation_and_score(
         }}
 
         CRITICAL RULES:
-        1. Base scores ONLY on evidence from the conversation
-        2. If an area wasn't discussed, use 70.0 (neutral/unknown)
-        3. Be specific in the summary - reference actual things they said
-        4. Include sublabel_scores only for areas clearly revealed in conversation
+        1. Base scores on the reflection context, the conversation, AND the user's existing profile
+        2. If an area wasn't discussed, keep scores close to the user's existing baseline (or 70.0 if no baseline)
+        3. Be specific in the summary - reference actual things from the reflection and conversation
+        4. Include sublabel_scores only for areas clearly revealed
         5. Return ONLY valid JSON, no markdown, no code blocks, no extra text
     """)
 
     chain = prompt | llm
     try:
         response = await chain.ainvoke(
-            {"transcript": transcript, "sublabels": json.dumps(all_sublabels, indent=2)}
+            {
+                "transcript": transcript,
+                "sublabels": json.dumps(all_sublabels, indent=2),
+                "scores_context": scores_context,
+                "event_context_str": event_context_str,
+            }
         )
 
         content = response.content.strip()

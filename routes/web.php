@@ -101,8 +101,8 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
 
     Route::get('community', [EventController::class, 'community'])->name('community');
 
-    Route::post('diagnostic/start', [FastApiController::class, 'diagnosticStart'])->name('diagnostic.start');
-    Route::post('diagnostic/answer', [FastApiController::class, 'diagnosticAnswer'])->name('diagnostic.answer');
+    Route::post('events/{event}/diagnostic/start', [FastApiController::class, 'diagnosticStart'])->name('diagnostic.start');
+    Route::post('events/{event}/diagnostic/answer', [FastApiController::class, 'diagnosticAnswer'])->name('diagnostic.answer');
 });
 
 Route::get('questionnaire', [FastApiController::class, 'questionnaire'])

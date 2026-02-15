@@ -78,4 +78,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserLabelHistory::class);
     }
+
+    public function diagnosticResults()
+    {
+        return $this->hasMany(AiDiagnosticResult::class);
+    }
 }

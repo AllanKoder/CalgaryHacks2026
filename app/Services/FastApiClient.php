@@ -30,18 +30,32 @@ class FastApiClient
         ]);
     }
 
-    public function diagnosticStart(string $userInput, $timeout = 30)
+    public function diagnosticStart(string $userInput, ?array $currentScores = null, ?array $eventContext = null, $timeout = 30)
     {
-        return Http::timeout($timeout)->post($this->base . '/diagnostic/start', [
-            'user_input' => $userInput,
-        ]);
+        $payload = ['user_input' => $userInput];
+        if ($currentScores) {
+            $payload['current_scores'] = $currentScores;
+        }
+        if ($eventContext) {
+            $payload['event_context'] = $eventContext;
+        }
+
+        return Http::timeout($timeout)->post($this->base . '/diagnostic/start', $payload);
     }
 
-    public function diagnosticAnswer(array $state, string $answer, $timeout = 60)
+    public function diagnosticAnswer(array $state, string $answer, ?array $currentScores = null, ?array $eventContext = null, $timeout = 60)
     {
-        return Http::timeout($timeout)->post($this->base . '/diagnostic/answer', [
+        $payload = [
             'state' => $state,
             'answer' => $answer,
-        ]);
+        ];
+        if ($currentScores) {
+            $payload['current_scores'] = $currentScores;
+        }
+        if ($eventContext) {
+            $payload['event_context'] = $eventContext;
+        }
+
+        return Http::timeout($timeout)->post($this->base . '/diagnostic/answer', $payload);
     }
 }

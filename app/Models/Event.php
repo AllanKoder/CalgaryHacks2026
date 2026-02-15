@@ -52,4 +52,9 @@ class Event extends Model
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
+
+    public function diagnosticResults()
+    {
+        return $this->hasMany(AiDiagnosticResult::class);
+    }
 }

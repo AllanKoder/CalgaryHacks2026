@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AiDiagnosticResult;
+use App\Models\Event;
 use App\Models\UserData;
 use App\Models\UserScoreHistory;
 use App\Services\FastApiClient;
@@ -214,14 +216,74 @@ class FastApiController extends Controller
         return $key ?? $label;
     }
 
-    public function diagnosticStart(Request $request, FastApiClient $client)
+    private function getCurrentScores(Request $request): ?array
     {
+        $userData = $request->user()?->userData;
+        if (! $userData) {
+            return null;
+        }
+
+        return [
+            'emotional_mastery' => (float) ($userData->EmotionalMastery ?? 50),
+            'cognitive_clarity' => (float) ($userData->CognitiveClarity ?? 50),
+            'social_relational' => (float) ($userData->SocialRelational ?? 50),
+            'ethical_moral' => (float) ($userData->EthicalMoral ?? 50),
+            'physical_lifestyle' => (float) ($userData->PhysicalHealth ?? 50),
+            'identity_growth' => (float) ($userData->IdentityGrowth ?? 50),
+        ];
+    }
+
+    private function buildEventContext(Event $event): array
+    {
+        $event->load(['identification', 'learning']);
+
+        $ctx = [
+            'title' => $event->title,
+            'focus' => $event->focus,
+            'description' => $event->description,
+            'emotional_severity' => $event->emotional_severity,
+            'triggers' => $event->triggers,
+            'occurred_at' => $event->occurred_at?->toDateString(),
+        ];
+
+        if (is_array($event->context)) {
+            $ctx['context'] = $event->context;
+        }
+        if (is_array($event->impact)) {
+            $ctx['impact'] = $event->impact;
+        }
+        if ($event->identification) {
+            $ctx['identification'] = [
+                'tag' => $event->identification->tag,
+                'main_category' => $event->identification->main_category,
+                'sub_category' => $event->identification->sub_category,
+                'assumptions' => $event->identification->assumptions,
+                'pattern_recognition' => $event->identification->pattern_recognition,
+            ];
+        }
+        if ($event->learning) {
+            $ctx['learning'] = [
+                'action_plan' => $event->learning->action_plan,
+                'next_time_strategy' => $event->learning->next_time_strategy,
+                'resources' => $event->learning->resources,
+            ];
+        }
+
+        return $ctx;
+    }
+
+    public function diagnosticStart(Request $request, Event $event, FastApiClient $client)
+    {
+        $this->authorize('view', $event);
+
         $data = $request->validate([
             'user_input' => ['required', 'string', 'max:5000'],
         ]);
 
         try {
-            $resp = $client->diagnosticStart($data['user_input']);
+            $currentScores = $this->getCurrentScores($request);
+            $eventContext = $this->buildEventContext($event);
+            $resp = $client->diagnosticStart($data['user_input'], $currentScores, $eventContext);
             $payload = $resp->json();
 
             if (! $resp->ok()) {
@@ -238,15 +300,19 @@ class FastApiController extends Controller
         }
     }
 
-    public function diagnosticAnswer(Request $request, FastApiClient $client)
+    public function diagnosticAnswer(Request $request, Event $event, FastApiClient $client)
     {
+        $this->authorize('view', $event);
+
         $data = $request->validate([
             'state' => ['required', 'array'],
             'answer' => ['required', 'string', 'max:5000'],
         ]);
 
         try {
-            $resp = $client->diagnosticAnswer($data['state'], $data['answer']);
+            $currentScores = $this->getCurrentScores($request);
+            $eventContext = $this->buildEventContext($event);
+            $resp = $client->diagnosticAnswer($data['state'], $data['answer'], $currentScores, $eventContext);
             $payload = $resp->json();
 
             if (! $resp->ok()) {
@@ -257,7 +323,7 @@ class FastApiController extends Controller
 
             // If the analysis is complete, persist the scores to the database
             if (($payload['is_complete'] ?? false) && isset($payload['analysis'])) {
-                $this->persistDiagnosticAnalysis($request, $payload['analysis']);
+                $this->persistDiagnosticAnalysis($request, $payload['analysis'], $event->id);
             }
 
             return response()->json($payload);
@@ -268,25 +334,24 @@ class FastApiController extends Controller
         }
     }
 
-    private function persistDiagnosticAnalysis(Request $request, array $analysis): void
+    private function persistDiagnosticAnalysis(Request $request, array $analysis, ?int $eventId = null): void
     {
-        // Persist label scores to user_data table
+        $user = $request->user();
+        if (! $user) {
+            return;
+        }
+
+        // Persist label scores to user_data table (updates radar/spider chart)
         $labelScores = $analysis['label_scores'] ?? null;
         if (is_array($labelScores)) {
             $this->persistQuizScores($request, $labelScores);
         }
 
-        // Persist overall score to user_score_history table
+        // Persist overall score to user_score_history table (updates line chart)
         $overallScore = $analysis['overall_score'] ?? null;
         $timestamp = $analysis['timestamp'] ?? now()->toIso8601String();
 
         if (is_numeric($overallScore)) {
-            $user = $request->user();
-            if (! $user) {
-                return;
-            }
-
-            // Calculate delta from last recorded score
             $lastHistory = $user->scoreHistory()
                 ->orderByDesc('recorded_at')
                 ->first();
@@ -303,5 +368,16 @@ class FastApiController extends Controller
                 ],
             ]);
         }
+
+        // Persist full analysis to ai_diagnostic_results table
+        AiDiagnosticResult::create([
+            'user_id' => $user->id,
+            'event_id' => $eventId,
+            'label_scores' => $analysis['label_scores'] ?? [],
+            'sublabel_scores' => $analysis['sublabel_scores'] ?? [],
+            'summary' => $analysis['summary'] ?? [],
+            'overall_score' => is_numeric($overallScore) ? round((float) $overallScore, 2) : 0,
+            'conversation_length' => $analysis['conversation_length'] ?? null,
+        ]);
     }
 }
