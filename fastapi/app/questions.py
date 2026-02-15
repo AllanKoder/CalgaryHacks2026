@@ -16,14 +16,8 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         options=[
             ("Blow up at them over text immediately", 10.0),
             ("Feel angry but say nothing and stew about it for days", 30.0),
-            (
-                "Feel disappointed, wait a bit, then calmly tell them how it affects you",
-                80.0,
-            ),
-            (
-                "Acknowledge the frustration, check in on them, and set a boundary",
-                100.0,
-            ),
+            ("Feel disappointed, wait a bit, then calmly tell them how it affects you",80.0,),
+            ("Acknowledge the frustration, check in on them, and set a boundary", 100.0,),
         ],
     ),
     QuizQuestion(

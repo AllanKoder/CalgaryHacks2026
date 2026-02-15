@@ -2,6 +2,8 @@
 /bootstrap/ssr
 /node_modules
 /fastapi/__pycache__
+/fastapi/__pycache__/app/__pycache__
+/fastapi/__pycache__/app/__pycache__/services/__pycache__
 /public/build
 /public/hot
 /public/storage
