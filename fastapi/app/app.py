@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import predict_router, root_router
+from .routers import predict_router, questions_router, root_router
 
 
 def create_app() -> FastAPI:
@@ -7,5 +7,6 @@ def create_app() -> FastAPI:
 
     app.include_router(root_router)
     app.include_router(predict_router)
+    app.include_router(questions_router)
 
     return app

@@ -1,7 +1,9 @@
+import { Link } from '@inertiajs/react';
 import { CalendarCheck, Sparkles } from 'lucide-react';
 import { AnalyzeButton } from '@/components/dashboard/analyze-button';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { questionnaire } from '@/route-helpers';
 
 type DashboardHeroProps = {
     name: string;
@@ -29,9 +31,11 @@ export function DashboardHero({ name }: DashboardHeroProps) {
                 </div>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-                <Button variant="outline" className="bg-white/70">
-                    <CalendarCheck className="size-4" />
-                    Review decisions
+                <Button variant="outline" className="bg-white/70" asChild>
+                    <Link href={questionnaire()} prefetch>
+                        <CalendarCheck className="size-4" />
+                        Review decisions
+                    </Link>
                 </Button>
                 <AnalyzeButton />
             </div>
