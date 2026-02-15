@@ -1,6 +1,6 @@
-from enum import Enum
 import os
 from pathlib import Path
+from enum import Enum
 
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
@@ -8,7 +8,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 
 from app.data.quiz import QuizQuestion
 
-load_dotenv(Path(__file__).resolve().parents[2] / ".env")
+load_dotenv(Path(__file__).resolve().parents[3] / ".env")
 
 
 def get_llm():
@@ -28,7 +28,7 @@ def get_embeddings():
     if not api_key:
         return None
     return GoogleGenerativeAIEmbeddings(
-        model="models/text-embedding-004",
+        model="models/gemini-embedding-001",
         api_key=api_key,
     )
 

@@ -50,7 +50,6 @@ export default function SimilarReflections({ eventId }: SimilarReflectionsProps)
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-purple-500" />
                         Similar Reflections
                     </CardTitle>
                 </CardHeader>
@@ -66,7 +65,6 @@ export default function SimilarReflections({ eventId }: SimilarReflectionsProps)
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-purple-500" />
                         Similar Reflections
                     </CardTitle>
                 </CardHeader>
@@ -82,7 +80,6 @@ export default function SimilarReflections({ eventId }: SimilarReflectionsProps)
             <Card>
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-purple-500" />
                         Similar Reflections
                     </CardTitle>
                 </CardHeader>
@@ -107,7 +104,6 @@ export default function SimilarReflections({ eventId }: SimilarReflectionsProps)
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-purple-500" />
                     Similar Reflections
                     <Badge variant="secondary" className="ml-auto">
                         {similar.length} found
