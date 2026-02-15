@@ -65,7 +65,7 @@ def _compute_overall_score(user: UserScores) -> float:
     return round(weighted_sum / total_weight, 2) if total_weight > 0 else DEFAULT_SCORE
 
 
-def initialize_from_quiz(user: UserScores,questions: list[QuizQuestion],answers: dict[str, int],) -> UserScores:
+def initialize_from_quiz(user: UserScores,questions: list[QuizQuestion],answers: dict[str, int]) -> UserScores:
     label_buckets: dict[Label, list[float]] = {label: [] for label in Label}
 
     for question in questions:
@@ -101,7 +101,6 @@ def initialize_from_quiz(user: UserScores,questions: list[QuizQuestion],answers:
             delta=0.0,  # First point has no change
         )
     )
-
     return user
 
 def update_sublabel_from_ai( user: UserScores, analysis: AIAnalysisResult) -> UserScores:
