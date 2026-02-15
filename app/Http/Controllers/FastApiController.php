@@ -49,4 +49,20 @@ class FastApiController extends Controller
             'questions' => $questions,
         ]);
     }
+
+    public function initQuizScores(Request $request, FastApiClient $client)
+    {
+        $data = $request->validate([
+            'answers' => ['required', 'array'],
+        ]);
+
+        try {
+            $resp = $client->initQuiz($data['answers']);
+            return response()->json($resp->json(), $resp->status());
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to calculate quiz scores.',
+            ], 502);
+        }
+    }
 }

@@ -22,4 +22,11 @@ class FastApiClient
     {
         return Http::timeout($timeout)->get($this->base . '/questions');
     }
+
+    public function initQuiz(array $answers, $timeout = 10)
+    {
+        return Http::timeout($timeout)->post($this->base . '/scoring/init-quiz', [
+            'answers' => $answers,
+        ]);
+    }
 }

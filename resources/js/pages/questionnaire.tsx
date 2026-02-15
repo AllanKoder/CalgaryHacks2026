@@ -24,9 +24,8 @@ const labelMap: Record<string, string> = {
 
 export default function Questionnaire({ questions }: QuestionnairePageProps) {
     const [activeIndex, setActiveIndex] = useState(0);
-    const [answers, setAnswers] = useState<
-        Record<string, string | number | null>
-    >({});
+    const [answers, setAnswers] = useState<Record<string, number>>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const total = questions.length;
     const currentQuestion = questions[activeIndex];
@@ -78,14 +77,54 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
         if (!currentQuestion) return;
         setAnswers((prev) => ({
             ...prev,
-            [currentQuestion.id]: value,
+            [currentQuestion.id]: Number(value),
         }));
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (!currentQuestion) return;
         if (isLastQuestion) {
-            router.post('/questionnaire/complete');
+            if (isSubmitting) return;
+            setIsSubmitting(true);
+            try {
+                const csrfToken = document
+                    .querySelector('meta[name="csrf-token"]')
+                    ?.getAttribute('content');
+                const response = await fetch('/questionnaire/score', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
+                    },
+                    body: JSON.stringify({
+                        answers,
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const labelScores =
+                        data?.label_scores ?? data?.labelScores ?? {};
+                    const entries = Object.entries(labelScores);
+                    if (entries.length) {
+                        entries.forEach(([label, score]) => {
+                            console.log(`${label}: ${score}`);
+                        });
+                    } else {
+                        console.log('Quiz scores:', data);
+                    }
+                } else {
+                    console.warn(
+                        'Failed to fetch quiz scores:',
+                        await response.text(),
+                    );
+                }
+            } catch (error) {
+                console.error('Failed to fetch quiz scores:', error);
+            } finally {
+                router.post('/questionnaire/complete');
+            }
             return;
         }
         setActiveIndex((prev) => Math.min(prev + 1, total - 1));
@@ -135,7 +174,7 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
 
                                 <QuestionnaireActions
                                     canGoBack={activeIndex > 0}
-                                    canGoNext={!!currentQuestion}
+                                    canGoNext={!!currentQuestion && !isSubmitting}
                                     isLast={isLastQuestion}
                                     onBack={handleBack}
                                     onNext={handleNext}
