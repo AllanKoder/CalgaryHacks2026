@@ -17,6 +17,8 @@ app/routers/predict.py
 app/routers/questions.py
 app/routers/root.py
 app/routers/scoring.py
+app/services/__init__.py
+app/services/ai_service.py
 fastapi_prototype.egg-info/PKG-INFO
 fastapi_prototype.egg-info/SOURCES.txt
 fastapi_prototype.egg-info/dependency_links.txt

@@ -8,15 +8,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->renameColumn('goal', 'focus');
-        });
+        if (Schema::hasColumn('events', 'goal')) {
+                  Schema::table('events', function (Blueprint $table) {
+                      $table->renameColumn('goal', 'focus');
+                  });
+              } else {
+                  // If goal doesn't exist, just add focus
+                  Schema::table('events', function (Blueprint $table) {
+                      $table->string('focus')->nullable();
+                  });
+              }
     }
 
     public function down(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->renameColumn('focus', 'goal');
-        });
+        if (Schema::hasColumn('events', 'focus')) {
+                    Schema::table('events', function (Blueprint $table) {
+                        $table->renameColumn('focus', 'goal');
+                    });
+                }
     }
 };
