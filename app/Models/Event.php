@@ -21,6 +21,7 @@ class Event extends Model
         'occurred_at',
         'context',
         'impact',
+        'embedding',
     ];
 
     protected $casts = [
@@ -29,6 +30,7 @@ class Event extends Model
         'occurred_at' => 'date',
         'context' => 'array',
         'impact' => 'array',
+        'embedding' => 'array',
     ];
 
     public function user()

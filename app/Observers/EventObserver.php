@@ -3,13 +3,13 @@
 namespace App\Observers;
 
 use App\Models\Event;
-use App\Services\TypesenseService;
+use App\Services\VectorSearchService;
 use Illuminate\Support\Facades\Log;
 
 class EventObserver
 {
     public function __construct(
-        private TypesenseService $typesense
+        private VectorSearchService $vectorSearch
     ) {}
 
     /**
@@ -21,7 +21,7 @@ class EventObserver
         try {
             $event->load(['identification', 'learning']);
             if ($event->identification) {
-                $this->typesense->indexReflection($event);
+                $this->vectorSearch->indexReflection($event);
             }
         } catch (\Exception $e) {
             Log::warning("Failed to index event {$event->id} on creation: " . $e->getMessage());
@@ -37,7 +37,7 @@ class EventObserver
         try {
             $event->load(['identification', 'learning']);
             if ($event->identification) {
-                $this->typesense->indexReflection($event);
+                $this->vectorSearch->indexReflection($event);
             }
         } catch (\Exception $e) {
             Log::warning("Failed to reindex event {$event->id} on update: " . $e->getMessage());
@@ -49,6 +49,6 @@ class EventObserver
      */
     public function deleted(Event $event): void
     {
-        // Could delete from Typesense here if needed
+        // Nothing to do for now
     }
 }

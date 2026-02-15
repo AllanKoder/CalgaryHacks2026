@@ -13,7 +13,7 @@ ReVibe helps users transform experiences into learning through a three-step proc
 Features:
 - Personal reflection journal
 - Structured analysis framework
-- **AI-Powered Vector Search** - Find similar past reflections based on semantic meaning
+- AI-Powered Vector Search - Find similar past reflections using semantic embeddings
 - Community learning (share reflections with peers)
 - AI-powered insights
 - Track growth over time
@@ -32,58 +32,55 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+Add your Google API key to `.env`:
+```env
+GOOGLE_API_KEY=your_google_api_key_here
+FASTAPI_URL=http://localhost:8001
+```
+
 ### 3. Setup Database
 ```bash
 touch database/database.sqlite
 php artisan migrate --seed
 ```
 
-### 4. Start Typesense (Vector Search)
-```bash
-./typesense.sh start
-php artisan typesense:setup
-```
-
-### 5. Start Development Servers
+### 4. Start Development Servers
 ```bash
 # Terminal 1: Laravel
 php artisan serve
 
-# Terminal 2: Vite
+# Terminal 2: Vite  
 npm run dev
 
-# Terminal 3: FastAPI (optional - for AI features)
-cd fastapi && uvicorn app.main:app --reload
+# Terminal 3: FastAPI (for AI features & embeddings)
+cd fastapi && uvicorn main:app --reload --port 8001
 ```
 
-### 6. Visit Application
+### 5. Visit Application
 - App: http://localhost:8000
 - Test User: `test@test.com` / `password123`
 
-## Vector Search Setup
+## Vector Search
 
-ReVibe uses **Typesense** with **Google Gemini embeddings** to find semantically similar reflections.
+ReVibe uses **Google Gemini embeddings** via FastAPI to find semantically similar reflections.
 
-### Configuration
-Add to `.env`:
-```env
-GOOGLE_API_KEY=your_google_api_key_here
-TYPESENSE_API_KEY=revibe-dev-key
-TYPESENSE_HOST=localhost
-TYPESENSE_PORT=8108
-TYPESENSE_PROTOCOL=http
-```
+### How It Works
+1. When you create a reflection, it's sent to FastAPI
+2. FastAPI generates a 768-dimensional embedding using Google Gemini
+3. The embedding is stored in SQLite alongside your reflection
+4. When viewing a reflection, we calculate cosine similarity with all your other reflections
+5. The most similar reflections are displayed to help you find patterns
 
 ### Commands
 ```bash
-./typesense.sh start          # Start Typesense server
-./typesense.sh stop           # Stop Typesense server
-./typesense.sh status         # Check status
-php artisan typesense:setup   # Create collection
-php artisan typesense:reindex # Reindex all reflections
+php artisan vector:reindex  # Reindex all reflections (requires FastAPI running)
 ```
 
-See [VECTOR_SEARCH_SUMMARY.md](VECTOR_SEARCH_SUMMARY.md) for complete details.
+### Architecture
+- **Embeddings**: Generated via FastAPI + Google Gemini (`text-embedding-004`)
+- **Storage**: JSON column in SQLite
+- **Search**: PHP cosine similarity calculation
+- **Simple & Self-Contained**: No Typesense, no separate vector DB
 
 ## Development
 
