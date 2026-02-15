@@ -4,7 +4,10 @@ import type { BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { dashboard, eventsIndex, eventsEdit, eventsDestroy, eventsIdentificationCreate, eventsIdentificationEdit, eventsLearningCreate, eventsLearningEdit } from '@/routes';
+import { dashboard } from '@/routes';
+import { index as eventsIndex, edit as eventsEdit, destroy as eventsDestroy } from '@/routes/events';
+import { create as eventsIdentificationCreate, edit as eventsIdentificationEdit } from '@/routes/events/identification';
+import { create as eventsLearningCreate, edit as eventsLearningEdit } from '@/routes/events/learning';
 
 interface Event {
     id: number;
@@ -14,19 +17,21 @@ interface Event {
     triggers: string | null;
     occurred_at: string | null;
     created_at: string;
-    // Context fields
-    location: string | null;
-    people_present: string | null;
-    power_dynamics: string | null;
-    what_happened_before: string | null;
-    mental_emotional_state: string | null;
-    organizational_pressures: string | null;
-    // Impact fields
-    directly_affected: string | null;
-    indirectly_affected: string | null;
-    immediate_consequences: string | null;
-    longer_term_consequences: string | null;
-    impact_significance: number | null;
+    context: {
+        location: string | null;
+        people_present: string | null;
+        power_dynamics: string | null;
+        what_happened_before: string | null;
+        mental_emotional_state: string | null;
+        organizational_pressures: string | null;
+    } | null;
+    impact: {
+        directly_affected: string | null;
+        indirectly_affected: string | null;
+        immediate_consequences: string | null;
+        longer_term_consequences: string | null;
+        impact_significance: number | null;
+    } | null;
     identification: {
         tag: string;
     } | null;
@@ -99,101 +104,101 @@ export default function Show({ event }: Props) {
                     </CardContent>
                 </Card>
 
-                {(event.location || event.people_present || event.power_dynamics || 
-                  event.what_happened_before || event.mental_emotional_state || 
-                  event.organizational_pressures) && (
+                {(event.context?.location || event.context?.people_present || event.context?.power_dynamics ||
+                  event.context?.what_happened_before || event.context?.mental_emotional_state ||
+                  event.context?.organizational_pressures) && (
                     <Card>
                         <CardHeader>
                             <CardTitle>Context</CardTitle>
                             <CardDescription>Understanding the environment and circumstances</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {event.location && (
+                            {event.context?.location && (
                                 <div>
                                     <h3 className="font-semibold mb-2">Where did this happen?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.location}</p>
+                                    <p className="text-sm text-muted-foreground">{event.context.location}</p>
                                 </div>
                             )}
 
-                            {event.people_present && (
+                            {event.context?.people_present && (
                                 <div>
                                     <h3 className="font-semibold mb-2">Who was present?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.people_present}</p>
+                                    <p className="text-sm text-muted-foreground">{event.context.people_present}</p>
                                 </div>
                             )}
 
-                            {event.power_dynamics && (
+                            {event.context?.power_dynamics && (
                                 <div>
                                     <h3 className="font-semibold mb-2">What were the power dynamics?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.power_dynamics}</p>
+                                    <p className="text-sm text-muted-foreground">{event.context.power_dynamics}</p>
                                 </div>
                             )}
 
-                            {event.what_happened_before && (
+                            {event.context?.what_happened_before && (
                                 <div>
                                     <h3 className="font-semibold mb-2">What was happening right before?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.what_happened_before}</p>
+                                    <p className="text-sm text-muted-foreground">{event.context.what_happened_before}</p>
                                 </div>
                             )}
 
-                            {event.mental_emotional_state && (
+                            {event.context?.mental_emotional_state && (
                                 <div>
                                     <h3 className="font-semibold mb-2">What was your mental/emotional state?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.mental_emotional_state}</p>
+                                    <p className="text-sm text-muted-foreground">{event.context.mental_emotional_state}</p>
                                 </div>
                             )}
 
-                            {event.organizational_pressures && (
+                            {event.context?.organizational_pressures && (
                                 <div>
                                     <h3 className="font-semibold mb-2">Were there organizational/time/resource pressures?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.organizational_pressures}</p>
+                                    <p className="text-sm text-muted-foreground">{event.context.organizational_pressures}</p>
                                 </div>
                             )}
                         </CardContent>
                     </Card>
                 )}
 
-                {(event.directly_affected || event.indirectly_affected || 
-                  event.immediate_consequences || event.longer_term_consequences || 
-                  event.impact_significance) && (
+                {(event.impact?.directly_affected || event.impact?.indirectly_affected ||
+                  event.impact?.immediate_consequences || event.impact?.longer_term_consequences ||
+                  event.impact?.impact_significance) && (
                     <Card>
                         <CardHeader>
                             <CardTitle>Impact</CardTitle>
                             <CardDescription>Understanding the consequences</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {event.directly_affected && (
+                            {event.impact?.directly_affected && (
                                 <div>
                                     <h3 className="font-semibold mb-2">Who was directly affected? How?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.directly_affected}</p>
+                                    <p className="text-sm text-muted-foreground">{event.impact.directly_affected}</p>
                                 </div>
                             )}
 
-                            {event.indirectly_affected && (
+                            {event.impact?.indirectly_affected && (
                                 <div>
                                     <h3 className="font-semibold mb-2">Who was indirectly affected?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.indirectly_affected}</p>
+                                    <p className="text-sm text-muted-foreground">{event.impact.indirectly_affected}</p>
                                 </div>
                             )}
 
-                            {event.immediate_consequences && (
+                            {event.impact?.immediate_consequences && (
                                 <div>
                                     <h3 className="font-semibold mb-2">What were the immediate consequences?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.immediate_consequences}</p>
+                                    <p className="text-sm text-muted-foreground">{event.impact.immediate_consequences}</p>
                                 </div>
                             )}
 
-                            {event.longer_term_consequences && (
+                            {event.impact?.longer_term_consequences && (
                                 <div>
                                     <h3 className="font-semibold mb-2">What could the longer-term consequences be?</h3>
-                                    <p className="text-sm text-muted-foreground">{event.longer_term_consequences}</p>
+                                    <p className="text-sm text-muted-foreground">{event.impact.longer_term_consequences}</p>
                                 </div>
                             )}
 
-                            {event.impact_significance && (
+                            {event.impact?.impact_significance && (
                                 <div>
                                     <h3 className="font-semibold mb-2">Impact Significance</h3>
-                                    <Badge variant="secondary">{event.impact_significance}/10</Badge>
+                                    <Badge variant="secondary">{event.impact.impact_significance}/10</Badge>
                                 </div>
                             )}
                         </CardContent>
@@ -236,8 +241,8 @@ export default function Show({ event }: Props) {
                                 </Link>
                             ) : (
                                 <Link href={eventsLearningCreate(event.id).url}>
-                                    <Button 
-                                        size="sm" 
+                                    <Button
+                                        size="sm"
                                         disabled={!event.identification}
                                     >
                                         Add Learning

@@ -17,25 +17,15 @@ class Event extends Model
         'emotional_severity',
         'triggers',
         'occurred_at',
-        // Context fields
-        'location',
-        'people_present',
-        'power_dynamics',
-        'what_happened_before',
-        'mental_emotional_state',
-        'organizational_pressures',
-        // Impact fields
-        'directly_affected',
-        'indirectly_affected',
-        'immediate_consequences',
-        'longer_term_consequences',
-        'impact_significance',
+        'context',
+        'impact',
     ];
 
     protected $casts = [
         'emotional_severity' => 'integer',
-        'impact_significance' => 'integer',
         'occurred_at' => 'date',
+        'context' => 'array',
+        'impact' => 'array',
     ];
 
     public function user()

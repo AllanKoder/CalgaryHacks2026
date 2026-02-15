@@ -34,6 +34,17 @@ class IdentificationController extends Controller
 
         $validated = $request->validate([
             'tag' => 'required|string',
+            'main_category' => 'nullable|string',
+            'sub_category' => 'nullable|string',
+            'assumptions' => 'nullable|array',
+            'assumptions.what_assumptions' => 'nullable|string',
+            'assumptions.ignored_information' => 'nullable|string',
+            'assumptions.protected_beliefs' => 'nullable|string',
+            'pattern_recognition' => 'nullable|array',
+            'pattern_recognition.noticed_before' => 'nullable|string',
+            'pattern_recognition.triggers' => 'nullable|string',
+            'pattern_recognition.personal_or_organizational' => 'nullable|string',
+            'pattern_recognition.common_thread' => 'nullable|string',
         ]);
 
         $event->identification()->create($validated);
@@ -68,6 +79,17 @@ class IdentificationController extends Controller
 
         $validated = $request->validate([
             'tag' => 'required|string',
+            'main_category' => 'nullable|string',
+            'sub_category' => 'nullable|string',
+            'assumptions' => 'nullable|array',
+            'assumptions.what_assumptions' => 'nullable|string',
+            'assumptions.ignored_information' => 'nullable|string',
+            'assumptions.protected_beliefs' => 'nullable|string',
+            'pattern_recognition' => 'nullable|array',
+            'pattern_recognition.noticed_before' => 'nullable|string',
+            'pattern_recognition.triggers' => 'nullable|string',
+            'pattern_recognition.personal_or_organizational' => 'nullable|string',
+            'pattern_recognition.common_thread' => 'nullable|string',
         ]);
 
         $event->identification->update($validated);
