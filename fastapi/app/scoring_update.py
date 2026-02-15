@@ -53,7 +53,7 @@ def _compute_overall_score(user: UserScores) -> float:
     Single number representing the user's state across all 78 sub-labels.
     Severity-weighted average of every sub-label score.
 
-    Formula: Sumation(score_i × severity_i) / Sumation(severity_i)
+    Formula: Sumation(score_i x severity_i) / Sumation(severity_i)
     """
     weighted_sum = 0.0
     total_weight = 0.0
@@ -189,7 +189,7 @@ def update_label_from_ai(
     Recalculates a single label's spider chart score from its sub-label scores.
 
     Formula:
-        label_score = Sumation(sublabel_score_i × severity_i) / Sumation(severity_i)
+        label_score = Sumation(sublabel_score_i x severity_i) / Sumation(severity_i)
 
     High-severity sub-labels have more pull on the label score. Sub-labels that
     haven't been directly assessed yet fall back to the quiz baseline.
