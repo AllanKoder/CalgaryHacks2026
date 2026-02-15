@@ -50,9 +50,6 @@ def _get_sublabel_score(user: UserScores, sublabel: SubLabelBase) -> float:
 
 def _compute_overall_score(user: UserScores) -> float:
     """
-    Single number representing the user's state across all 78 sub-labels.
-    Severity-weighted average of every sub-label score.
-
     Formula: Sumation(score_i x severity_i) / Sumation(severity_i)
     """
     weighted_sum = 0.0
@@ -68,14 +65,7 @@ def _compute_overall_score(user: UserScores) -> float:
     return round(weighted_sum / total_weight, 2) if total_weight > 0 else DEFAULT_SCORE
 
 
-def initialize_from_quiz(
-    user: UserScores,
-    questions: list[QuizQuestion],
-    answers: dict[str, int],
-) -> UserScores:
-    """ """
-    # 1. Group scores by Label (Category)
-    # We create a list of scores for each of the 6 labels
+def initialize_from_quiz(user: UserScores,questions: list[QuizQuestion],answers: dict[str, int],) -> UserScores:
     label_buckets: dict[Label, list[float]] = {label: [] for label in Label}
 
     for question in questions:
@@ -86,8 +76,6 @@ def initialize_from_quiz(
 
         # Calculate score (0-100 scale)
         if question.question_type == QuizQuestionType.SCENARIO:
-            # For scenarios, the score is explicitly defined in the options tuple
-            # question.options[index] -> ("text", score)
             score = question.options[answer_value][1]
         else:
             # For AGREE_DISAGREE / SELF_RATING (1-5 scale)
@@ -99,21 +87,12 @@ def initialize_from_quiz(
 
         label_buckets[question.label].append(score)
 
-    # 2. Update Spider Chart Data (label_scores)
-    # We average the 4 questions for each label
     for label, scores in label_buckets.items():
         if scores:
             user.label_scores[label] = round(sum(scores) / len(scores), 1)
         else:
             user.label_scores[label] = DEFAULT_SCORE
 
-    # 3. Generate the Gemini Report
-    # We do this before the line chart so the user gets everything at once
-    # user.initial_report = await generate_quiz_analysis_ai_service(questions, answers)
-
-    # 4. Update Line Graph Data (line_chart_history)
-    # _compute_overall_score uses the label_scores we just calculated
-    # to create the first data point on the graph.
     initial_overall_score = _compute_overall_score(user)
 
     user.line_chart_history.append(
@@ -127,25 +106,7 @@ def initialize_from_quiz(
     return user
 
 
-def update_sublabel_from_ai(
-    user: UserScores,
-    analysis: AIAnalysisResult,
-) -> UserScores:
-    """
-    Called after the AI analyzes a user's logged event (mistake or practice).
-
-    - Adjusts the specific sub-label score up or down based on severity + magnitude.
-    - Computes the new overall score across all 78 sub-labels.
-    - Calculates the delta from the previous overall score.
-    - Appends a new LineChartPoint (positive delta = improving, negative = declining).
-
-    Args:
-        user: Current UserScores.
-        analysis: AI's classification — which sub-label, improvement or mistake, how significant.
-
-    Returns:
-        Updated UserScores with new sub-label score and line chart data point.
-    """
+def update_sublabel_from_ai( user: UserScores, analysis: AIAnalysisResult) -> UserScores:
     sublabel = analysis.sublabel
     current = _get_sublabel_score(user, sublabel)
     severity = sublabel.severity
@@ -181,28 +142,7 @@ def update_sublabel_from_ai(
     return user
 
 
-def update_label_from_ai(
-    user: UserScores,
-    label: Label,
-) -> UserScores:
-    """
-    Recalculates a single label's spider chart score from its sub-label scores.
-
-    Formula:
-        label_score = Sumation(sublabel_score_i x severity_i) / Sumation(severity_i)
-
-    High-severity sub-labels have more pull on the label score. Sub-labels that
-    haven't been directly assessed yet fall back to the quiz baseline.
-
-    Call this AFTER update_sublabel_from_ai to keep the spider chart in sync.
-
-    Args:
-        user: Current UserScores.
-        label: Which of the 6 labels to recalculate.
-
-    Returns:
-        Updated UserScores with recalculated label score.
-    """
+def update_label_from_ai( user: UserScores, label: Label) -> UserScores:
     enum_class = LABEL_TO_SUBLABEL_ENUM[label]
 
     weighted_sum = 0.0
@@ -220,15 +160,8 @@ def update_label_from_ai(
     return user
 
 
-def process_ai_analysis(
-    user: UserScores,
-    analysis: AIAnalysisResult,
-) -> UserScores:
+def process_ai_analysis( user: UserScores, analysis: AIAnalysisResult) -> UserScores:
     """
-    Single entry point that does both updates in order:
-      1. Updates the sub-label score -> new line chart point
-      2. Recalculates the parent label score -> spider chart update
-
     Use this instead of calling update_sublabel_from_ai + update_label_from_ai separately.
     """
     user = update_sublabel_from_ai(user, analysis)
