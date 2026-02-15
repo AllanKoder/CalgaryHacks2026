@@ -14,8 +14,8 @@ class SubLabelBase(Enum):
     severity: int
 
     def __init__(self, value: str, severity: int) -> None:
-        self._value = value
-        self._severity = severity
+        self._value_ = value
+        self.severity = severity
 
     @property
     def label(self) -> Label:
