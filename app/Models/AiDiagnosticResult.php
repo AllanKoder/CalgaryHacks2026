@@ -15,6 +15,9 @@ class AiDiagnosticResult extends Model
         'summary',
         'overall_score',
         'conversation_length',
+        'user_input',
+        'ai_question',
+        'user_answer',
     ];
 
     protected $casts = [

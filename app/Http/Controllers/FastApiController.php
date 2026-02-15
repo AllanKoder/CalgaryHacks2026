@@ -323,7 +323,12 @@ class FastApiController extends Controller
 
             // If the analysis is complete, persist the scores to the database
             if (($payload['is_complete'] ?? false) && isset($payload['analysis'])) {
-                $this->persistDiagnosticAnalysis($request, $payload['analysis'], $event->id);
+                $conversationData = [
+                    'user_input' => $data['state']['user_input'] ?? null,
+                    'ai_question' => $data['state']['ai_question'] ?? null,
+                    'user_answer' => $data['answer'],
+                ];
+                $this->persistDiagnosticAnalysis($request, $payload['analysis'], $event->id, $conversationData);
             }
 
             return response()->json($payload);
@@ -334,7 +339,7 @@ class FastApiController extends Controller
         }
     }
 
-    private function persistDiagnosticAnalysis(Request $request, array $analysis, ?int $eventId = null): void
+    private function persistDiagnosticAnalysis(Request $request, array $analysis, ?int $eventId = null, array $conversationData = []): void
     {
         $user = $request->user();
         if (! $user) {
@@ -378,6 +383,9 @@ class FastApiController extends Controller
             'summary' => $analysis['summary'] ?? [],
             'overall_score' => is_numeric($overallScore) ? round((float) $overallScore, 2) : 0,
             'conversation_length' => $analysis['conversation_length'] ?? null,
+            'user_input' => $conversationData['user_input'] ?? null,
+            'ai_question' => $conversationData['ai_question'] ?? null,
+            'user_answer' => $conversationData['user_answer'] ?? null,
         ]);
     }
 }

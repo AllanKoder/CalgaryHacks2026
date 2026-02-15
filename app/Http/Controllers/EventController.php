@@ -61,8 +61,13 @@ class EventController extends Controller
 
         $event->load(['identification', 'learning']);
 
+        $latestDiagnostic = $event->diagnosticResults()
+            ->latest()
+            ->first();
+
         return Inertia::render('Events/Show', [
             'event' => $event,
+            'diagnosticResult' => $latestDiagnostic,
         ]);
     }
 

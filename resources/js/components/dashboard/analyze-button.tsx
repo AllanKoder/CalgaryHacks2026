@@ -13,7 +13,6 @@ export function AnalyzeButton({
     className,
 }: AnalyzeButtonProps) {
     return (
-<<<<<<< Updated upstream
         <Link href={eventsCreate().url}>
             <Button
                 className={cn(
@@ -24,15 +23,5 @@ export function AnalyzeButton({
                 {label}
             </Button>
         </Link>
-=======
-        <Button
-            className={cn(
-                'shadow-lg shadow-primary/20 transition-transform hover:-translate-y-0.5',
-                className,
-            )}
-        >
-            {label}
-        </Button>
->>>>>>> Stashed changes
     );
 }

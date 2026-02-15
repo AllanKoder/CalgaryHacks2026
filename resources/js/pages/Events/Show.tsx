@@ -56,8 +56,24 @@ interface Event {
     } | null;
 }
 
+interface DiagnosticResult {
+    id: number;
+    summary: {
+        overall_assessment: string;
+        key_insights: string[];
+        primary_concerns: string[];
+        strengths_identified: string[];
+        recommended_focus: string;
+    } | null;
+    user_input: string | null;
+    ai_question: string | null;
+    user_answer: string | null;
+    created_at: string;
+}
+
 interface Props {
     event: Event;
+    diagnosticResult: DiagnosticResult | null;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -65,7 +81,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Events', href: eventsIndex().url },
 ];
 
-export default function Show({ event }: Props) {
+export default function Show({ event, diagnosticResult }: Props) {
     function handleDelete() {
         if (confirm('Are you sure you want to delete this event?')) {
             router.delete(eventsDestroy(event.id).url);
@@ -449,6 +465,110 @@ export default function Show({ event }: Props) {
                         )}
                     </CardContent>
                 </Card>
+
+                {/* AI Consulting Summary */}
+                {diagnosticResult?.summary && (
+                    <Card>
+                        <CardHeader>
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <CardTitle>AI Consulting Summary</CardTitle>
+                                    <CardDescription>
+                                        Analysis from {new Date(diagnosticResult.created_at).toLocaleDateString()}
+                                    </CardDescription>
+                                </div>
+                                <Link href={`/events/${event.id}/ai-consulting`}>
+                                    <Button variant="outline" size="sm">Run New Analysis</Button>
+                                </Link>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Conversation recap */}
+                            {diagnosticResult.user_input && (
+                                <div className="space-y-3">
+                                    <h3 className="font-semibold text-sm text-muted-foreground">Conversation</h3>
+                                    <div className="rounded-lg border bg-muted/50 p-3">
+                                        <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">You shared</p>
+                                        <p className="text-sm">{diagnosticResult.user_input}</p>
+                                    </div>
+                                    {diagnosticResult.ai_question && (
+                                        <div className="rounded-lg border p-3">
+                                            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">AI asked</p>
+                                            <p className="text-sm font-medium">{diagnosticResult.ai_question}</p>
+                                        </div>
+                                    )}
+                                    {diagnosticResult.user_answer && (
+                                        <div className="rounded-lg border bg-muted/50 p-3">
+                                            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">You responded</p>
+                                            <p className="text-sm">{diagnosticResult.user_answer}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Overall assessment */}
+                            {diagnosticResult.summary.overall_assessment && (
+                                <div>
+                                    <h3 className="font-semibold text-sm text-muted-foreground mb-2">Overall Assessment</h3>
+                                    <p className="text-sm leading-relaxed">{diagnosticResult.summary.overall_assessment}</p>
+                                </div>
+                            )}
+
+                            {/* Recommended focus */}
+                            {diagnosticResult.summary.recommended_focus && (
+                                <div className="rounded-lg border bg-primary/5 p-4">
+                                    <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Recommended Focus</p>
+                                    <p className="text-sm font-medium">{diagnosticResult.summary.recommended_focus}</p>
+                                </div>
+                            )}
+
+                            {/* Key insights, concerns, strengths in a grid */}
+                            <div className="grid gap-4 md:grid-cols-2">
+                                {diagnosticResult.summary.key_insights?.length > 0 && (
+                                    <div>
+                                        <h3 className="font-semibold text-sm mb-2">Key Insights</h3>
+                                        <ul className="space-y-1">
+                                            {diagnosticResult.summary.key_insights.map((insight, i) => (
+                                                <li key={i} className="flex gap-2 text-sm text-muted-foreground">
+                                                    <span className="shrink-0">-</span>
+                                                    {insight}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {diagnosticResult.summary.primary_concerns?.length > 0 && (
+                                    <div>
+                                        <h3 className="font-semibold text-sm mb-2">Primary Concerns</h3>
+                                        <ul className="space-y-1">
+                                            {diagnosticResult.summary.primary_concerns.map((concern, i) => (
+                                                <li key={i} className="flex gap-2 text-sm text-muted-foreground">
+                                                    <span className="shrink-0">-</span>
+                                                    {concern}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
+                                {diagnosticResult.summary.strengths_identified?.length > 0 && (
+                                    <div>
+                                        <h3 className="font-semibold text-sm mb-2">Strengths Identified</h3>
+                                        <ul className="space-y-1">
+                                            {diagnosticResult.summary.strengths_identified.map((strength, i) => (
+                                                <li key={i} className="flex gap-2 text-sm text-muted-foreground">
+                                                    <span className="shrink-0">-</span>
+                                                    {strength}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* AI-Powered Similar Reflections */}
                 {event.identification && (

@@ -180,15 +180,9 @@ export default function Dashboard({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-<<<<<<< Updated upstream
-            <div className="min-h-[calc(100svh-4rem)] bg-[radial-gradient(circle_at_top,_rgba(20,184,166,0.14),_transparent_45%),radial-gradient(circle_at_20%_20%,_rgba(14,116,144,0.14),_transparent_40%)] lg:h-[calc(100svh-4rem)] lg:overflow-hidden">
-                <div className="mx-auto flex h-full w-full max-w-7xl flex-col gap-4 px-4 py-4">
-                    <DashboardHero name="Andrew" />
-=======
             <div className="min-h-full bg-[radial-gradient(circle_at_top,_rgba(20,184,166,0.14),_transparent_45%),radial-gradient(circle_at_20%_20%,_rgba(14,116,144,0.14),_transparent_40%)]">
                 <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
                     <DashboardHero name="" />
->>>>>>> Stashed changes
 
                     <div className="grid h-full min-h-0 gap-4 lg:grid-cols-[minmax(0,1fr)_420px]">
                         <div className="flex min-h-0 flex-col gap-4">
