@@ -42,4 +42,9 @@ class Event extends Model
     {
         return $this->hasOne(Learnings::class);
     }
+
+    public function goal()
+    {
+        return $this->hasOne(Goal::class);
+    }
 }

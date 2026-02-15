@@ -7,6 +7,7 @@ use App\Http\Controllers\FastApiController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LearningController;
+use App\Http\Controllers\GoalController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -32,6 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('events/{event}/learning/edit', [LearningController::class, 'edit'])->name('events.learning.edit');
     Route::put('events/{event}/learning', [LearningController::class, 'update'])->name('events.learning.update');
     Route::delete('events/{event}/learning', [LearningController::class, 'destroy'])->name('events.learning.destroy');
+    
+    Route::get('events/{event}/goal/create', [GoalController::class, 'create'])->name('events.goal.create');
+    Route::post('events/{event}/goal', [GoalController::class, 'store'])->name('events.goal.store');
+    Route::get('events/{event}/goal/edit', [GoalController::class, 'edit'])->name('events.goal.edit');
+    Route::put('events/{event}/goal', [GoalController::class, 'update'])->name('events.goal.update');
+    Route::delete('events/{event}/goal', [GoalController::class, 'destroy'])->name('events.goal.destroy');
 });
 
 Route::get('analysis', function () {
