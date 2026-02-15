@@ -20,7 +20,18 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(function () {
     Route::get('dashboard', function (Request $request) {
-        $userData = $request->user()?->userData;
+        $user = $request->user();
+        $userData = $user?->userData;
+        $lineChartHistory = $user?->scoreHistory()
+            ->orderBy('recorded_at')
+            ->get(['recorded_at', 'overall_score', 'delta'])
+            ->map(fn ($point) => [
+                'timestamp' => $point->recorded_at?->toIso8601String(),
+                'overall_score' => (float) $point->overall_score,
+                'delta' => (float) $point->delta,
+            ])
+            ->values()
+            ->all();
 
         return Inertia::render('dashboard', [
             'userData' => $userData
@@ -33,6 +44,7 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
                     'identityGrowth' => $userData->IdentityGrowth,
                 ]
                 : null,
+            'lineChartHistory' => $lineChartHistory,
         ]);
     })->name('dashboard');
 

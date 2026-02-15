@@ -20,6 +20,11 @@ type DashboardPageProps = {
         physicalLifestyle: number;
         identityGrowth: number;
     } | null;
+    lineChartHistory?: {
+        timestamp: string;
+        overall_score: number;
+        delta: number;
+    }[] | null;
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -29,7 +34,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const growthData = {
+const fallbackGrowthData = {
     '2025-12-01': 52,
     '2025-12-08': 58,
     '2025-12-15': 61,
@@ -117,7 +122,10 @@ const communityItems: CommunityItem[] = [
     },
 ];
 
-export default function Dashboard({ userData }: DashboardPageProps) {
+export default function Dashboard({
+    userData,
+    lineChartHistory,
+}: DashboardPageProps) {
     const radarMetrics = userData
         ? [
               { label: 'Emotional Mastery', value: userData.emotionalMastery },
@@ -128,6 +136,16 @@ export default function Dashboard({ userData }: DashboardPageProps) {
               { label: 'Identity & Growth', value: userData.identityGrowth },
           ]
         : fallbackRadarMetrics;
+
+    const growthData =
+        lineChartHistory && lineChartHistory.length > 0
+            ? Object.fromEntries(
+                  lineChartHistory.map((point) => [
+                      point.timestamp,
+                      point.overall_score,
+                  ]),
+              )
+            : fallbackGrowthData;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

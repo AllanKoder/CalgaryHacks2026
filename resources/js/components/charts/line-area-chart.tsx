@@ -50,6 +50,18 @@ export function LineAreaChart({
 
     const minValue = 0;
     const maxValue = Math.max(100, ...values);
+    const yAxisTicks = useMemo(() => {
+        const tickCount = 5;
+        const step = (maxValue - minValue) / (tickCount - 1 || 1);
+
+        return Array.from({ length: tickCount }, (_, index) => {
+            const value = minValue + step * index;
+            return {
+                value,
+                label: Math.round(value).toString(),
+            };
+        });
+    }, [maxValue, minValue]);
 
     const points = useMemo(() => {
         if (values.length === 0) {
@@ -175,20 +187,32 @@ export function LineAreaChart({
                     </filter>
                 </defs>
 
-                {[0.25, 0.5, 0.75].map((ratio) => {
+                {yAxisTicks.map((tick) => {
+                    const ratio =
+                        (tick.value - minValue) /
+                        Math.max(1, maxValue - minValue);
                     const y =
                         height - padding - ratio * (height - padding * 2);
                     return (
-                        <line
-                            key={ratio}
-                            x1={padding}
-                            x2={width - padding}
-                            y1={y}
-                            y2={y}
-                            stroke="var(--color-border)"
-                            strokeDasharray="4 6"
-                            strokeOpacity="0.45"
-                        />
+                        <g key={tick.value}>
+                            <line
+                                x1={padding}
+                                x2={width - padding}
+                                y1={y}
+                                y2={y}
+                                stroke="var(--color-border)"
+                                strokeDasharray="4 6"
+                                strokeOpacity="0.45"
+                            />
+                            <text
+                                x="4"
+                                y={y + 3}
+                                fontSize="10"
+                                fill="var(--color-muted-foreground)"
+                            >
+                                {tick.label}
+                            </text>
+                        </g>
                     );
                 })}
 
