@@ -148,7 +148,7 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Questionnaire" />
-            <div className="min-h-full bg-[radial-gradient(circle_at_top,_rgba(20,184,166,0.16),_transparent_45%),radial-gradient(circle_at_20%_20%,_rgba(13,148,136,0.16),_transparent_40%)]">
+            <div className="flex-1 bg-[radial-gradient(circle_at_top,_rgba(20,184,166,0.16),_transparent_45%),radial-gradient(circle_at_20%_20%,_rgba(13,148,136,0.16),_transparent_40%)]">
                 <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8">
                     <QuestionnaireHero
                         current={Math.min(activeIndex + 1, total)}

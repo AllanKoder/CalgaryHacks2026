@@ -2,6 +2,7 @@ import { Head } from '@inertiajs/react';
 import { DashboardHero } from '@/components/dashboard/dashboard-hero';
 import { GrowthCard } from '@/components/dashboard/growth-card';
 import type { KpiItem } from '@/components/dashboard/kpi-grid';
+import { QuickReviewCard } from '@/components/dashboard/quick-review-card';
 import { RigourCard } from '@/components/dashboard/rigour-card';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/route-helpers';
@@ -118,6 +119,19 @@ export default function Dashboard({
               }))
             : fallbackGrowthData;
 
+    const topMetric = radarMetrics.reduce(
+        (best, metric) =>
+            metric.value > best.value ? metric : best,
+        radarMetrics[0],
+    );
+    const quickReview = {
+        metric: topMetric.label,
+        subtitle: 'Your strongest signal right now. Keep reinforcing the habits behind it.',
+        dialogTitle: `Quick Review: ${topMetric.label}`,
+        review:
+            'You are consistently scoring higher in this domain compared to the rest of your profile. The last stretch of updates shows steady improvement with fewer regressions. Keep the same routine that produced these gains and look for one small experiment this week to maintain momentum.',
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -136,6 +150,7 @@ export default function Dashboard({
 
                         <div className="flex min-h-0 flex-col gap-4">
                             <RigourCard metrics={radarMetrics} className="h-full" />
+                            <QuickReviewCard data={quickReview} />
                         </div>
                     </div>
                 </div>
