@@ -4,7 +4,10 @@ export type User = {
     email: string;
     avatar?: string;
     email_verified_at: string | null;
+    has_logged_in?: boolean;
+    last_login_at?: string | null;
     two_factor_enabled?: boolean;
+    onboarding_completed_at?: string | null;
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
@@ -12,6 +15,7 @@ export type User = {
 
 export type Auth = {
     user: User;
+    isFirstLogin?: boolean;
 };
 
 export type TwoFactorSetupData = {

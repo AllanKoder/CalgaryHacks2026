@@ -1,13 +1,23 @@
 import os
+from pathlib import Path
 
-from langchain.prompts import ChatPromptTemplate
+from dotenv import load_dotenv
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.data.quiz import QuizQuestion
 
-# Initialize Gemini (Ensure GOOGLE_API_KEY is in your .env)
-# Using 'gemini-1.5-flash' for speed, or 'gemini-1.5-pro' for deeper analysis
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
+
+def get_llm():
+    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return None
+    return ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        temperature=0.7,
+        api_key=api_key,
+    )
 
 
 async def generate_quiz_analysis(
@@ -42,7 +52,7 @@ async def generate_quiz_analysis(
         Analyze these quiz results:
         {transcript}
 
-        Provide a "Mindset Analysis" report in Markdown format:
+        Provide a "Mindset Analysis" report in Json format:
         1. **The Core Profile**: A 2-sentence summary of their current psychological state.
         2. **Primary Strength**: Identify the category where they show the most maturity.
         3. **The Growth Edge**: Identify one specific area (with reasoning) that they should prioritize.
@@ -52,6 +62,13 @@ async def generate_quiz_analysis(
     """)
 
     # 3. Execute with Gemini
+    llm = get_llm()
+    if llm is None:
+        return (
+            "AI analysis is unavailable until a Gemini API key is configured. "
+            "Please set GOOGLE_API_KEY or GEMINI_API_KEY."
+        )
+
     chain = prompt | llm
     try:
         response = await chain.ainvoke({"transcript": transcript})

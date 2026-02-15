@@ -1,3 +1,6 @@
+import { usePage } from '@inertiajs/react';
+import { useEffect } from 'react';
+
 import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/app-sidebar';
@@ -8,6 +11,14 @@ export default function AppSidebarLayout({
     children,
     breadcrumbs = [],
 }: AppLayoutProps) {
+    const { auth } = usePage().props;
+
+    useEffect(() => {
+        if (auth?.isFirstLogin) {
+            console.log('first log in');
+        }
+    }, [auth?.isFirstLogin]);
+
     return (
         <AppShell variant="sidebar">
             <AppSidebar />

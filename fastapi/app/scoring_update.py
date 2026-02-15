@@ -22,10 +22,10 @@ from app.label import (
     SocialRelational,
     SubLabelBase,
 )
-from app.services.ai_service import (
-    generate_quiz_analysis as generate_quiz_analysis_ai_service,
-)
-from app.services.ai_service import llm as LLM_ai_service
+# from app.services.ai_service import (
+#     generate_quiz_analysis as generate_quiz_analysis_ai_service,
+# )
+# from app.services.ai_service import llm as LLM_ai_service
 
 LABEL_TO_SUBLABEL_ENUM: dict[Label, type[SubLabelBase]] = {
     Label.EMOTIONAL_MASTERY: EmotionalMastery,
@@ -53,7 +53,7 @@ def _compute_overall_score(user: UserScores) -> float:
     Single number representing the user's state across all 78 sub-labels.
     Severity-weighted average of every sub-label score.
 
-    Formula: Sumation(score_i × severity_i) / Sumation(severity_i)
+    Formula: Sumation(score_i x severity_i) / Sumation(severity_i)
     """
     weighted_sum = 0.0
     total_weight = 0.0
@@ -68,7 +68,7 @@ def _compute_overall_score(user: UserScores) -> float:
     return round(weighted_sum / total_weight, 2) if total_weight > 0 else DEFAULT_SCORE
 
 
-async def initialize_from_quiz(
+def initialize_from_quiz(
     user: UserScores,
     questions: list[QuizQuestion],
     answers: dict[str, int],
@@ -109,7 +109,7 @@ async def initialize_from_quiz(
 
     # 3. Generate the Gemini Report
     # We do this before the line chart so the user gets everything at once
-    user.initial_report = await generate_quiz_analysis_ai_service(questions, answers)
+    # user.initial_report = await generate_quiz_analysis_ai_service(questions, answers)
 
     # 4. Update Line Graph Data (line_chart_history)
     # _compute_overall_score uses the label_scores we just calculated
@@ -189,7 +189,7 @@ def update_label_from_ai(
     Recalculates a single label's spider chart score from its sub-label scores.
 
     Formula:
-        label_score = Sumation(sublabel_score_i × severity_i) / Sumation(severity_i)
+        label_score = Sumation(sublabel_score_i x severity_i) / Sumation(severity_i)
 
     High-severity sub-labels have more pull on the label score. Sub-labels that
     haven't been directly assessed yet fall back to the quiz baseline.

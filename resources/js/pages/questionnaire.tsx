@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useMemo, useState } from 'react';
 import { QuestionnaireActions } from '@/components/questionnaire/questionnaire-actions';
 import { QuestionnaireHero } from '@/components/questionnaire/questionnaire-hero';
@@ -6,7 +6,7 @@ import { QuestionCard } from '@/components/questionnaire/question-card';
 import { QuestionnaireSidebar } from '@/components/questionnaire/questionnaire-sidebar';
 import type { QuestionnaireQuestion } from '@/components/questionnaire/types';
 import AppLayout from '@/layouts/app-layout';
-import { questionnaire as questionnaireRoute } from '@/route-helpers';
+import { dashboard, questionnaire as questionnaireRoute } from '@/route-helpers';
 import type { BreadcrumbItem } from '@/types';
 
 type QuestionnairePageProps = {
@@ -30,6 +30,7 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
 
     const total = questions.length;
     const currentQuestion = questions[activeIndex];
+    const isLastQuestion = total > 0 && activeIndex >= total - 1;
     const completed = useMemo(
         () =>
             questions.filter((question) => answers[question.id] !== undefined)
@@ -82,6 +83,11 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
     };
 
     const handleNext = () => {
+        if (!currentQuestion) return;
+        if (isLastQuestion) {
+            router.post('/questionnaire/complete');
+            return;
+        }
         setActiveIndex((prev) => Math.min(prev + 1, total - 1));
     };
 
@@ -129,7 +135,8 @@ export default function Questionnaire({ questions }: QuestionnairePageProps) {
 
                                 <QuestionnaireActions
                                     canGoBack={activeIndex > 0}
-                                    canGoNext={activeIndex < total - 1}
+                                    canGoNext={!!currentQuestion}
+                                    isLast={isLastQuestion}
                                     onBack={handleBack}
                                     onNext={handleNext}
                                 />

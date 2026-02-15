@@ -4,10 +4,12 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\FastApiController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\CommentController;
+use App\Http\Middleware\EnsureOnboardingComplete;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -15,11 +17,11 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(function () {
+    Route::get('dashboard', function () {
+        return Inertia::render('dashboard');
+    })->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('events', EventController::class);
     Route::post('events/{event}/make-public', [EventController::class, 'makePublic'])->name('events.makePublic');
 
@@ -37,15 +39,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
     Route::get('comments', [CommentController::class, 'index'])->name('comments.index');
-});
 
-Route::get('community', [EventController::class, 'community'])
-    ->middleware(['auth', 'verified'])
-    ->name('community');
+    Route::get('community', [EventController::class, 'community'])->name('community');
+});
 
 Route::get('questionnaire', [FastApiController::class, 'questionnaire'])
     ->middleware(['auth', 'verified'])
     ->name('questionnaire');
+
+Route::post('questionnaire/complete', [OnboardingController::class, 'complete'])
+    ->middleware(['auth', 'verified'])
+    ->name('questionnaire.complete');
 
 Route::get('/fastapi-test', [FastApiController::class, 'info'])->name('fastapi.test');
 
