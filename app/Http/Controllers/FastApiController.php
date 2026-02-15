@@ -6,6 +6,7 @@ use App\Models\AiDiagnosticResult;
 use App\Models\Event;
 use App\Models\UserData;
 use App\Models\UserScoreHistory;
+use App\Models\UserLabelHistory;
 use App\Services\FastApiClient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -72,7 +73,7 @@ class FastApiController extends Controller
             if ($resp->ok()) {
                 $labelScores = $payload['label_scores'] ?? $payload['labelScores'] ?? null;
                 if (is_array($labelScores)) {
-                    $this->persistQuizScores($request, $labelScores);
+                $this->persistQuizScores($request, $labelScores);
                 }
 
                 $lineChartHistory = $payload['line_chart_history'] ?? $payload['lineChartHistory'] ?? null;
@@ -89,7 +90,7 @@ class FastApiController extends Controller
         }
     }
 
-    private function persistQuizScores(Request $request, array $labelScores): void
+    private function persistQuizScores(Request $request, array $labelScores, ?string $recordedAt = null): void
     {
         $user = $request->user();
         if (! $user) {
@@ -142,6 +143,8 @@ class FastApiController extends Controller
             ['user_id' => $user->id],
             $values
         );
+
+        $this->persistLabelHistory($request, $labelScores, $recordedAt);
     }
 
     private function persistLineChartHistory(Request $request, array $history): void
@@ -183,6 +186,44 @@ class FastApiController extends Controller
             $rows,
             ['user_id', 'recorded_at'],
             ['overall_score', 'delta', 'updated_at']
+        );
+    }
+
+    private function persistLabelHistory(Request $request, array $labelScores, ?string $recordedAt = null): void
+    {
+        $user = $request->user();
+        if (! $user) {
+            return;
+        }
+
+        $timestamp = $recordedAt
+            ? Carbon::parse($recordedAt)->utc()
+            : now()->utc();
+
+        $rows = [];
+        foreach ($labelScores as $label => $score) {
+            if (! is_string($label) || ! is_numeric($score)) {
+                continue;
+            }
+
+            $rows[] = [
+                'user_id' => $user->id,
+                'label_key' => $this->normalizeLabelKey($label),
+                'recorded_at' => $timestamp,
+                'score' => round((float) $score, 2),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        if ($rows === []) {
+            return;
+        }
+
+        UserLabelHistory::upsert(
+            $rows,
+            ['user_id', 'label_key', 'recorded_at'],
+            ['score', 'updated_at']
         );
     }
 
@@ -349,7 +390,7 @@ class FastApiController extends Controller
         // Persist label scores to user_data table (updates radar/spider chart)
         $labelScores = $analysis['label_scores'] ?? null;
         if (is_array($labelScores)) {
-            $this->persistQuizScores($request, $labelScores);
+            $this->persistQuizScores($request, $labelScores, $analysis['timestamp'] ?? null);
         }
 
         // Persist overall score to user_score_history table (updates line chart)

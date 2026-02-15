@@ -163,7 +163,7 @@ export default function AiConsulting({ event, question }: Props) {
                     <Badge variant="secondary" className="w-fit">AI Consulting</Badge>
                     <h1 className="text-3xl font-bold">AI Consulting Model</h1>
                     <p className="max-w-2xl text-muted-foreground">
-                        Share what's on your mind. The AI will ask you one targeted question, then analyze your responses to update your growth metrics.
+                        Take a quiet moment to reflect and share what's on your mind.
                     </p>
                 </div>
 
@@ -196,9 +196,6 @@ export default function AiConsulting({ event, question }: Props) {
                     <Card>
                         <CardHeader>
                             <CardTitle>Step 1: Share What's On Your Mind</CardTitle>
-                            <CardDescription>
-                                Describe what you're struggling with, what's bothering you, or what you'd like to reflect on.
-                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleStartDiagnostic} className="space-y-4">

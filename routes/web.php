@@ -54,11 +54,21 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
                 ->orderByDesc('recorded_at')
                 ->get(['label_key', 'score', 'recorded_at']);
 
+            $normalizeLabelKey = function (string $label): string {
+                $key = preg_replace('/([a-z])([A-Z])/', '$1_$2', $label);
+                $key = strtolower($key);
+                $key = str_replace([' ', '-', '.'], '_', $key);
+                $key = preg_replace('/^label_/', '', $key);
+                $key = preg_replace('/_+/', '_', $key);
+
+                return $key;
+            };
+
             $latestByLabel = [];
             $previousByLabel = [];
 
             foreach ($history as $row) {
-                $label = $row->label_key;
+                $label = $normalizeLabelKey($row->label_key);
                 if (! array_key_exists($label, $latestByLabel)) {
                     $latestByLabel[$label] = (float) $row->score;
                     continue;
@@ -69,22 +79,22 @@ Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(
                 }
             }
 
-        $labelKeyMap = [
-            'emotional_mastery' => 'emotionalMastery',
-            'cognitive_clarity' => 'cognitiveClarity',
-            'social_relational' => 'socialRelational',
-            'ethical_moral' => 'ethicalMoral',
-            'physical_lifestyle' => 'physicalLifestyle',
-            'physical_health' => 'physicalLifestyle',
-            'identity_growth' => 'identityGrowth',
-        ];
+            $labelKeyMap = [
+                'emotional_mastery' => 'emotionalMastery',
+                'cognitive_clarity' => 'cognitiveClarity',
+                'social_relational' => 'socialRelational',
+                'ethical_moral' => 'ethicalMoral',
+                'physical_lifestyle' => 'physicalLifestyle',
+                'physical_health' => 'physicalLifestyle',
+                'identity_growth' => 'identityGrowth',
+            ];
 
-        foreach ($latestByLabel as $label => $latestScore) {
-            $previousScore = $previousByLabel[$label] ?? $latestScore;
-            $mappedKey = $labelKeyMap[$label] ?? $label;
-            $metricDeltas[$mappedKey] = round($latestScore - $previousScore, 1);
+            foreach ($latestByLabel as $label => $latestScore) {
+                $previousScore = $previousByLabel[$label] ?? $latestScore;
+                $mappedKey = $labelKeyMap[$label] ?? $label;
+                $metricDeltas[$mappedKey] = round($latestScore - $previousScore, 1);
+            }
         }
-    }
 
         return Inertia::render('dashboard', [
             'userData' => $userData

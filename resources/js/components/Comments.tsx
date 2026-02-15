@@ -70,7 +70,7 @@ export default function Comments({ commentableType, commentableId }: CommentsPro
                 {/* Add Comment Form */}
                 <form onSubmit={handleSubmit} className="space-y-3">
                     <Textarea
-                        placeholder="💡 Share advice • 🤝 Relate a similar experience • 📚 Recommend resources • ❤️ Offer support"
+                        placeholder="Share advice, relate a similar experience, recommend resources, or offer support"
                         value={data.content}
                         onChange={(e) => setData('content', e.target.value)}
                         rows={4}
