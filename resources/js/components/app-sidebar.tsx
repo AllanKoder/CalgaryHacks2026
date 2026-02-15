@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BarChart3, BookOpen, Folder, LayoutGrid, Users } from 'lucide-react';
+import { BarChart3, BookOpen, ClipboardList, Folder, LayoutGrid, Users } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -31,6 +31,11 @@ const mainNavItems: NavItem[] = [
         title: 'Community',
         href: community(),
         icon: Users,
+    },
+    {
+        title: 'Events',
+        href: '/events',
+        icon: ClipboardList,
     },
 ];
 

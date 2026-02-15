@@ -1,0 +1,76 @@
+import { Head, useForm } from '@inertiajs/react';
+import AppLayout from '@/layouts/app-layout';
+import type { BreadcrumbItem } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+interface Event {
+    id: number;
+    description: string;
+}
+
+interface Props {
+    event: Event;
+}
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Dashboard', href: '/dashboard' },
+    { title: 'Events', href: '/events' },
+    { title: 'Add Identification', href: '#' },
+];
+
+export default function Create({ event }: Props) {
+    const { data, setData, post, processing, errors } = useForm({
+        tag: '',
+    });
+
+    function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        post(`/events/${event.id}/identification`);
+    }
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Add Identification" />
+            <div className="flex h-full flex-1 flex-col gap-4 p-4">
+                <h1 className="text-2xl font-bold">Add Identification</h1>
+                <p className="text-muted-foreground">Event: {event.description}</p>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Identification</CardTitle>
+                            <CardDescription>Categorize the mental aspect of this event</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div>
+                                <Label htmlFor="tag">Mental Problem Tag *</Label>
+                                <Input
+                                    id="tag"
+                                    value={data.tag}
+                                    onChange={(e) => setData('tag', e.target.value)}
+                                    placeholder="e.g., Anxiety, Procrastination, Self-Doubt"
+                                    required
+                                />
+                                {errors.tag && (
+                                    <p className="text-sm text-destructive mt-1">{errors.tag}</p>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <div className="flex gap-2">
+                        <Button type="submit" disabled={processing}>
+                            Save Identification
+                        </Button>
+                        <Button type="button" variant="outline" onClick={() => window.history.back()}>
+                            Cancel
+                        </Button>
+                    </div>
+                </form>
+            </div>
+        </AppLayout>
+    );
+}

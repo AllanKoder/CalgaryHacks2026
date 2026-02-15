@@ -50,8 +50,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function mistakes()
+    public function events()
     {
-        return $this->hasMany(Mistake::class);
+        return $this->hasMany(Event::class);
     }
 }

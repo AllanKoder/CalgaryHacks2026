@@ -11,14 +11,14 @@ class Learnings extends Model
     use HasFactory;
 
     protected $fillable = [
-        'mistake_id',
+        'event_id',
         'action_plan',
         'next_time_strategy',
         'resources',
     ];
 
-    public function mistake()
+    public function event()
     {
-        return $this->belongsTo(Mistake::class);
+        return $this->belongsTo(Event::class);
     }
 }

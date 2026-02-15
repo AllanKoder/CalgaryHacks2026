@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('identifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('mistake_id')->constrained()->onDelete('cascade');
+            $table->foreignId('event_id')->constrained()->onDelete('cascade');
             $table->string('tag');
             $table->timestamps();
         });

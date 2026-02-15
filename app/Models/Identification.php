@@ -11,12 +11,12 @@ class Identification extends Model
     use HasFactory;
 
     protected $fillable = [
-        'mistake_id',
+        'event_id',
         'tag',
     ];
 
-    public function mistake()
+    public function event()
     {
-        return $this->belongsTo(Mistake::class);
+        return $this->belongsTo(Event::class);
     }
 }
