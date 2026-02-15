@@ -6,46 +6,72 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { dashboard, eventsIndex, eventsCreate, eventsStore } from '@/route-helpers';
+import { dashboard, eventsIndex, eventsUpdate } from '@/route-helpers';
+
+interface Event {
+    id: number;
+    title: string;
+    description: string;
+    emotional_severity: number;
+    triggers: string | null;
+    occurred_at: string | null;
+    // Context fields
+    location: string | null;
+    people_present: string | null;
+    power_dynamics: string | null;
+    what_happened_before: string | null;
+    mental_emotional_state: string | null;
+    organizational_pressures: string | null;
+    // Impact fields
+    directly_affected: string | null;
+    indirectly_affected: string | null;
+    immediate_consequences: string | null;
+    longer_term_consequences: string | null;
+    impact_significance: number | null;
+}
+
+interface Props {
+    event: Event;
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
     { title: 'Events', href: eventsIndex().url },
-    { title: 'Create', href: eventsCreate().url },
+    { title: 'Edit', href: '#' },
 ];
 
-export default function Create() {
-    const { data, setData, post, processing, errors } = useForm({
-        title: '',
-        description: '',
-        emotional_severity: 3,
-        triggers: '',
-        occurred_at: '',
+export default function Edit({ event }: Props) {
+    const { data, setData, put, processing, errors } = useForm({
+        title: event.title || '',
+        description: event.description,
+        emotional_severity: event.emotional_severity,
+        triggers: event.triggers || '',
+        occurred_at: event.occurred_at || '',
         // Context fields
-        location: '',
-        people_present: '',
-        power_dynamics: '',
-        what_happened_before: '',
-        mental_emotional_state: '',
-        organizational_pressures: '',
+        location: event.location || '',
+        people_present: event.people_present || '',
+        power_dynamics: event.power_dynamics || '',
+        what_happened_before: event.what_happened_before || '',
+        mental_emotional_state: event.mental_emotional_state || '',
+        organizational_pressures: event.organizational_pressures || '',
         // Impact fields
-        directly_affected: '',
-        indirectly_affected: '',
-        immediate_consequences: '',
-        longer_term_consequences: '',
-        impact_significance: 5,
+        directly_affected: event.directly_affected || '',
+        indirectly_affected: event.indirectly_affected || '',
+        immediate_consequences: event.immediate_consequences || '',
+        longer_term_consequences: event.longer_term_consequences || '',
+        impact_significance: event.impact_significance || 5,
     });
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        post(eventsStore().url);
+        put(eventsUpdate(event.id).url);
     }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Record an Event" />
+            <Head title="Edit Event" />
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
-                <h1 className="text-2xl font-bold">Record an Event</h1>
+                <h1 className="text-2xl font-bold">Edit Event</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card>
@@ -299,7 +325,7 @@ export default function Create() {
 
                     <div className="flex gap-2">
                         <Button type="submit" disabled={processing}>
-                            Save Event
+                            Update Event
                         </Button>
                         <Button type="button" variant="outline" onClick={() => window.history.back()}>
                             Cancel

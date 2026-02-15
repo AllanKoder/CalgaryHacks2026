@@ -1,0 +1,42 @@
+// Compatibility layer for flattened route imports.
+import {
+    analysis,
+    community,
+    dashboard,
+    home,
+    login,
+    logout,
+    register,
+} from '@/routes';
+import events from '@/routes/events';
+
+export {
+    analysis,
+    community,
+    dashboard,
+    home,
+    login,
+    logout,
+    register,
+    events,
+};
+
+export const eventsIndex = events.index;
+export const eventsCreate = events.create;
+export const eventsStore = events.store;
+export const eventsShow = events.show;
+export const eventsEdit = events.edit;
+export const eventsUpdate = events.update;
+export const eventsDestroy = events.destroy;
+
+export const eventsIdentificationCreate = events.identification.create;
+export const eventsIdentificationStore = events.identification.store;
+export const eventsIdentificationEdit = events.identification.edit;
+export const eventsIdentificationUpdate = events.identification.update;
+export const eventsIdentificationDestroy = events.identification.destroy;
+
+export const eventsLearningCreate = events.learning.create;
+export const eventsLearningStore = events.learning.store;
+export const eventsLearningEdit = events.learning.edit;
+export const eventsLearningUpdate = events.learning.update;
+export const eventsLearningDestroy = events.learning.destroy;
