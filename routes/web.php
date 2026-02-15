@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\FastApiController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\LearningController;
+use App\Http\Middleware\EnsureOnboardingComplete;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -14,11 +16,11 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified', EnsureOnboardingComplete::class])->group(function () {
+    Route::get('dashboard', function () {
+        return Inertia::render('dashboard');
+    })->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('events', EventController::class);
 
     Route::get('events/{event}/identification/create', [IdentificationController::class, 'create'])->name('events.identification.create');
@@ -32,15 +34,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('events/{event}/learning/edit', [LearningController::class, 'edit'])->name('events.learning.edit');
     Route::put('events/{event}/learning', [LearningController::class, 'update'])->name('events.learning.update');
     Route::delete('events/{event}/learning', [LearningController::class, 'destroy'])->name('events.learning.destroy');
-});
 
-Route::get('community', function () {
-    return Inertia::render('community');
-})->middleware(['auth', 'verified'])->name('community');
+    Route::get('community', function () {
+        return Inertia::render('community');
+    })->name('community');
+});
 
 Route::get('questionnaire', [FastApiController::class, 'questionnaire'])
     ->middleware(['auth', 'verified'])
     ->name('questionnaire');
+
+Route::post('questionnaire/complete', [OnboardingController::class, 'complete'])
+    ->middleware(['auth', 'verified'])
+    ->name('questionnaire.complete');
 
 Route::get('/fastapi-test', [FastApiController::class, 'info'])->name('fastapi.test');
 

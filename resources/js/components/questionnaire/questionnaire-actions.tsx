@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 type QuestionnaireActionsProps = {
     canGoBack: boolean;
     canGoNext: boolean;
+    isLast?: boolean;
     onBack: () => void;
     onNext: () => void;
 };
@@ -11,6 +12,7 @@ type QuestionnaireActionsProps = {
 export function QuestionnaireActions({
     canGoBack,
     canGoNext,
+    isLast = false,
     onBack,
     onNext,
 }: QuestionnaireActionsProps) {
@@ -26,7 +28,7 @@ export function QuestionnaireActions({
                 Previous
             </Button>
             <Button onClick={onNext} disabled={!canGoNext}>
-                Next
+                {isLast ? 'Finish' : 'Next'}
                 <ArrowRight className="size-4" />
             </Button>
         </div>

@@ -22,10 +22,10 @@ from app.label import (
     SocialRelational,
     SubLabelBase,
 )
-from app.services.ai_service import (
-    generate_quiz_analysis as generate_quiz_analysis_ai_service,
-)
-from app.services.ai_service import llm as LLM_ai_service
+# from app.services.ai_service import (
+#     generate_quiz_analysis as generate_quiz_analysis_ai_service,
+# )
+# from app.services.ai_service import llm as LLM_ai_service
 
 LABEL_TO_SUBLABEL_ENUM: dict[Label, type[SubLabelBase]] = {
     Label.EMOTIONAL_MASTERY: EmotionalMastery,

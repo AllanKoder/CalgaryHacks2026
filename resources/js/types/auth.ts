@@ -7,6 +7,7 @@ export type User = {
     has_logged_in?: boolean;
     last_login_at?: string | null;
     two_factor_enabled?: boolean;
+    onboarding_completed_at?: string | null;
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
