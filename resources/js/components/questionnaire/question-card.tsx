@@ -56,9 +56,9 @@ export function QuestionCard({
 }: QuestionCardProps) {
     const options =
         question.type === 'scenario'
-            ? (question.options ?? []).map((option) => ({
+            ? (question.options ?? []).map((option, index) => ({
                   label: option.text,
-                  value: option.text,
+                  value: index,
               }))
             : question.type === 'agree_disagree'
               ? agreeDisagreeOptions

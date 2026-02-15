@@ -44,6 +44,10 @@ Route::get('questionnaire', [FastApiController::class, 'questionnaire'])
     ->middleware(['auth', 'verified'])
     ->name('questionnaire');
 
+Route::post('questionnaire/score', [FastApiController::class, 'initQuizScores'])
+    ->middleware(['auth', 'verified'])
+    ->name('questionnaire.score');
+
 Route::post('questionnaire/complete', [OnboardingController::class, 'complete'])
     ->middleware(['auth', 'verified'])
     ->name('questionnaire.complete');
