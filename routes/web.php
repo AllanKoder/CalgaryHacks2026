@@ -34,10 +34,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('events/{event}/learning', [LearningController::class, 'destroy'])->name('events.learning.destroy');
 });
 
-Route::get('analysis', function () {
-    return Inertia::render('analysis');
-})->middleware(['auth', 'verified'])->name('analysis');
-
 Route::get('community', function () {
     return Inertia::render('community');
 })->middleware(['auth', 'verified'])->name('community');

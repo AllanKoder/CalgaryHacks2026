@@ -1,6 +1,5 @@
 // Compatibility layer for flattened route imports.
 import {
-    analysis,
     community,
     dashboard,
     home,
@@ -12,7 +11,6 @@ import {
 import events from '@/routes/events';
 
 export {
-    analysis,
     community,
     dashboard,
     home,
