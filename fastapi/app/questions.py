@@ -6,7 +6,6 @@ Mix of scenario-based, agree/disagree, and self-rating formats.
 from app.data.quiz import QuizQuestion, QuizQuestionType
 from app.label import Label
 
-
 QUIZ_QUESTIONS: list[QuizQuestion] = [
     # ──────────────────────────────────────────
     # EMOTIONAL MASTERY (4 questions)
@@ -19,8 +18,14 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         options=[
             ("Blow up at them over text immediately", 10.0),
             ("Feel angry but say nothing and stew about it for days", 30.0),
-            ("Feel disappointed, wait a bit, then calmly tell them how it affects you", 80.0),
-            ("Acknowledge the frustration, check in on them, and set a boundary", 100.0),
+            (
+                "Feel disappointed, wait a bit, then calmly tell them how it affects you",
+                80.0,
+            ),
+            (
+                "Acknowledge the frustration, check in on them, and set a boundary",
+                100.0,
+            ),
         ],
     ),
     QuizQuestion(
@@ -44,7 +49,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I recover from emotional setbacks (bad news, arguments, disappointments) within a reasonable time.",
         inverted=False,
     ),
-
     # ──────────────────────────────────────────
     # COGNITIVE CLARITY (4 questions)
     # ──────────────────────────────────────────
@@ -81,7 +85,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I tend to assume the worst-case outcome when facing uncertainty.",
         inverted=True,
     ),
-
     # ──────────────────────────────────────────
     # SOCIAL & RELATIONAL (4 questions)
     # ──────────────────────────────────────────
@@ -118,7 +121,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I can express my needs clearly in relationships without starting a fight.",
         inverted=False,
     ),
-
     # ──────────────────────────────────────────
     # ETHICAL & MORAL (4 questions)
     # ──────────────────────────────────────────
@@ -155,7 +157,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I sometimes hold others to standards that I don't follow myself.",
         inverted=True,
     ),
-
     # ──────────────────────────────────────────
     # PHYSICAL & LIFESTYLE (4 questions)
     # ──────────────────────────────────────────
@@ -166,7 +167,10 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="It's 11 PM on a work night. You have an important morning meeting but you're deep into social media scrolling. What do you do?",
         options=[
             ("Keep scrolling — you'll deal with it tomorrow", 10.0),
-            ("Tell yourself 'five more minutes' but end up staying up another hour", 25.0),
+            (
+                "Tell yourself 'five more minutes' but end up staying up another hour",
+                25.0,
+            ),
             ("Feel guilty, put the phone down, but take a while to fall asleep", 55.0),
             ("Set the phone to charge in another room and go to sleep", 100.0),
         ],
@@ -192,7 +196,6 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         text="I manage my money responsibly — I know what I spend and save regularly.",
         inverted=False,
     ),
-
     # ──────────────────────────────────────────
     # IDENTITY & GROWTH (4 questions)
     # ──────────────────────────────────────────
@@ -204,8 +207,14 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         options=[
             ("Feel devastated and stop trying — you're clearly not good enough", 10.0),
             ("Blame the process or the people who chose someone else", 25.0),
-            ("Feel hurt but move on without reflecting on what you could improve", 45.0),
-            ("Feel disappointed, ask for feedback, and use it to improve your next attempt", 100.0),
+            (
+                "Feel hurt but move on without reflecting on what you could improve",
+                45.0,
+            ),
+            (
+                "Feel disappointed, ask for feedback, and use it to improve your next attempt",
+                100.0,
+            ),
         ],
     ),
     QuizQuestion(
