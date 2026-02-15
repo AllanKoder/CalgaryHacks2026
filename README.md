@@ -1,10 +1,10 @@
-# ReVibe - Reflective Practice Journal
+# Reflect - Reflective Practice Journal
 
-**ReVibe** is a digital tool for structured reflective practice based on Terry Borton's reflective framework and experiential learning theory.
+**Reflect** is a digital tool for structured reflective practice based on Terry Borton's reflective framework and experiential learning theory.
 
 ## About
 
-ReVibe helps users transform experiences into learning through a three-step process:
+Reflect helps users transform experiences into learning through a three-step process:
 
 1. **What?** - Document your experience
 2. **So What?** - Reflect and analyze (identify patterns, assumptions, insights)
@@ -62,7 +62,7 @@ cd fastapi && uvicorn main:app --reload --port 8001
 
 ## Vector Search
 
-ReVibe uses **Google Gemini embeddings** via FastAPI to find semantically similar reflections.
+Reflect uses **Google Gemini embeddings** via FastAPI to find semantically similar reflections.
 
 ### How It Works
 1. When you create a reflection, it's sent to FastAPI
