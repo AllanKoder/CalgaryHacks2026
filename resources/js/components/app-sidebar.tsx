@@ -24,7 +24,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Events',
-        href: eventsIndex().url,
+        href: eventsIndex(),
         icon: ClipboardList,
     },
     {

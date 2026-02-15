@@ -14,6 +14,19 @@ interface Event {
     triggers: string | null;
     occurred_at: string | null;
     created_at: string;
+    // Context fields
+    location: string | null;
+    people_present: string | null;
+    power_dynamics: string | null;
+    what_happened_before: string | null;
+    mental_emotional_state: string | null;
+    organizational_pressures: string | null;
+    // Impact fields
+    directly_affected: string | null;
+    indirectly_affected: string | null;
+    immediate_consequences: string | null;
+    longer_term_consequences: string | null;
+    impact_significance: number | null;
     identification: {
         tag: string;
     } | null;
@@ -85,6 +98,107 @@ export default function Show({ event }: Props) {
                         )}
                     </CardContent>
                 </Card>
+
+                {(event.location || event.people_present || event.power_dynamics || 
+                  event.what_happened_before || event.mental_emotional_state || 
+                  event.organizational_pressures) && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Context</CardTitle>
+                            <CardDescription>Understanding the environment and circumstances</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {event.location && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">Where did this happen?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.location}</p>
+                                </div>
+                            )}
+
+                            {event.people_present && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">Who was present?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.people_present}</p>
+                                </div>
+                            )}
+
+                            {event.power_dynamics && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">What were the power dynamics?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.power_dynamics}</p>
+                                </div>
+                            )}
+
+                            {event.what_happened_before && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">What was happening right before?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.what_happened_before}</p>
+                                </div>
+                            )}
+
+                            {event.mental_emotional_state && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">What was your mental/emotional state?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.mental_emotional_state}</p>
+                                </div>
+                            )}
+
+                            {event.organizational_pressures && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">Were there organizational/time/resource pressures?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.organizational_pressures}</p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
+
+                {(event.directly_affected || event.indirectly_affected || 
+                  event.immediate_consequences || event.longer_term_consequences || 
+                  event.impact_significance) && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Impact</CardTitle>
+                            <CardDescription>Understanding the consequences</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {event.directly_affected && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">Who was directly affected? How?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.directly_affected}</p>
+                                </div>
+                            )}
+
+                            {event.indirectly_affected && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">Who was indirectly affected?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.indirectly_affected}</p>
+                                </div>
+                            )}
+
+                            {event.immediate_consequences && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">What were the immediate consequences?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.immediate_consequences}</p>
+                                </div>
+                            )}
+
+                            {event.longer_term_consequences && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">What could the longer-term consequences be?</h3>
+                                    <p className="text-sm text-muted-foreground">{event.longer_term_consequences}</p>
+                                </div>
+                            )}
+
+                            {event.impact_significance && (
+                                <div>
+                                    <h3 className="font-semibold mb-2">Impact Significance</h3>
+                                    <Badge variant="secondary">{event.impact_significance}/10</Badge>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
 
                 <Card>
                     <CardHeader>

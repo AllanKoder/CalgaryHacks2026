@@ -33,6 +33,19 @@ class EventController extends Controller
             'emotional_severity' => 'required|integer|min:1|max:5',
             'triggers' => 'nullable|string',
             'occurred_at' => 'nullable|date',
+            // Context fields
+            'location' => 'nullable|string',
+            'people_present' => 'nullable|string',
+            'power_dynamics' => 'nullable|string',
+            'what_happened_before' => 'nullable|string',
+            'mental_emotional_state' => 'nullable|string',
+            'organizational_pressures' => 'nullable|string',
+            // Impact fields
+            'directly_affected' => 'nullable|string',
+            'indirectly_affected' => 'nullable|string',
+            'immediate_consequences' => 'nullable|string',
+            'longer_term_consequences' => 'nullable|string',
+            'impact_significance' => 'nullable|integer|min:1|max:10',
         ]);
 
         $event = auth()->user()->events()->create($validated);
@@ -71,6 +84,19 @@ class EventController extends Controller
             'emotional_severity' => 'required|integer|min:1|max:5',
             'triggers' => 'nullable|string',
             'occurred_at' => 'nullable|date',
+            // Context fields
+            'location' => 'nullable|string',
+            'people_present' => 'nullable|string',
+            'power_dynamics' => 'nullable|string',
+            'what_happened_before' => 'nullable|string',
+            'mental_emotional_state' => 'nullable|string',
+            'organizational_pressures' => 'nullable|string',
+            // Impact fields
+            'directly_affected' => 'nullable|string',
+            'indirectly_affected' => 'nullable|string',
+            'immediate_consequences' => 'nullable|string',
+            'longer_term_consequences' => 'nullable|string',
+            'impact_significance' => 'nullable|integer|min:1|max:10',
         ]);
 
         $event->update($validated);

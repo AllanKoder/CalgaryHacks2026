@@ -21,6 +21,19 @@ export default function Create() {
         emotional_severity: 3,
         triggers: '',
         occurred_at: '',
+        // Context fields
+        location: '',
+        people_present: '',
+        power_dynamics: '',
+        what_happened_before: '',
+        mental_emotional_state: '',
+        organizational_pressures: '',
+        // Impact fields
+        directly_affected: '',
+        indirectly_affected: '',
+        immediate_consequences: '',
+        longer_term_consequences: '',
+        impact_significance: 5,
     });
 
     function handleSubmit(e: React.FormEvent) {
@@ -37,8 +50,8 @@ export default function Create() {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Event Details</CardTitle>
-                            <CardDescription>Describe what happened</CardDescription>
+                            <CardTitle>Basic Information</CardTitle>
+                            <CardDescription>What happened?</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
@@ -113,6 +126,172 @@ export default function Create() {
                                 />
                                 {errors.triggers && (
                                     <p className="text-sm text-destructive mt-1">{errors.triggers}</p>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Context</CardTitle>
+                            <CardDescription>Understanding the environment and circumstances</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div>
+                                <Label htmlFor="location">Where did this happen?</Label>
+                                <Input
+                                    id="location"
+                                    value={data.location}
+                                    onChange={(e) => setData('location', e.target.value)}
+                                    placeholder="Setting/environment"
+                                />
+                                {errors.location && (
+                                    <p className="text-sm text-destructive mt-1">{errors.location}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="people_present">Who was present?</Label>
+                                <Textarea
+                                    id="people_present"
+                                    value={data.people_present}
+                                    onChange={(e) => setData('people_present', e.target.value)}
+                                    placeholder="Who else was there?"
+                                />
+                                {errors.people_present && (
+                                    <p className="text-sm text-destructive mt-1">{errors.people_present}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="power_dynamics">What were the power dynamics?</Label>
+                                <Textarea
+                                    id="power_dynamics"
+                                    value={data.power_dynamics}
+                                    onChange={(e) => setData('power_dynamics', e.target.value)}
+                                    placeholder="Authority, hierarchy, relationships"
+                                />
+                                {errors.power_dynamics && (
+                                    <p className="text-sm text-destructive mt-1">{errors.power_dynamics}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="what_happened_before">What was happening right before?</Label>
+                                <Textarea
+                                    id="what_happened_before"
+                                    value={data.what_happened_before}
+                                    onChange={(e) => setData('what_happened_before', e.target.value)}
+                                    placeholder="Events leading up to this"
+                                />
+                                {errors.what_happened_before && (
+                                    <p className="text-sm text-destructive mt-1">{errors.what_happened_before}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="mental_emotional_state">What was your mental/emotional state?</Label>
+                                <Textarea
+                                    id="mental_emotional_state"
+                                    value={data.mental_emotional_state}
+                                    onChange={(e) => setData('mental_emotional_state', e.target.value)}
+                                    placeholder="Rushed, tired, stressed, distracted?"
+                                />
+                                {errors.mental_emotional_state && (
+                                    <p className="text-sm text-destructive mt-1">{errors.mental_emotional_state}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="organizational_pressures">Were there organizational/time/resource pressures?</Label>
+                                <Textarea
+                                    id="organizational_pressures"
+                                    value={data.organizational_pressures}
+                                    onChange={(e) => setData('organizational_pressures', e.target.value)}
+                                    placeholder="Deadlines, constraints, limited resources"
+                                />
+                                {errors.organizational_pressures && (
+                                    <p className="text-sm text-destructive mt-1">{errors.organizational_pressures}</p>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Impact</CardTitle>
+                            <CardDescription>Understanding the consequences</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div>
+                                <Label htmlFor="directly_affected">Who was directly affected? How?</Label>
+                                <Textarea
+                                    id="directly_affected"
+                                    value={data.directly_affected}
+                                    onChange={(e) => setData('directly_affected', e.target.value)}
+                                    placeholder="Primary people impacted"
+                                />
+                                {errors.directly_affected && (
+                                    <p className="text-sm text-destructive mt-1">{errors.directly_affected}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="indirectly_affected">Who was indirectly affected?</Label>
+                                <Textarea
+                                    id="indirectly_affected"
+                                    value={data.indirectly_affected}
+                                    onChange={(e) => setData('indirectly_affected', e.target.value)}
+                                    placeholder="Observers, teams, communities"
+                                />
+                                {errors.indirectly_affected && (
+                                    <p className="text-sm text-destructive mt-1">{errors.indirectly_affected}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="immediate_consequences">What were the immediate consequences?</Label>
+                                <Textarea
+                                    id="immediate_consequences"
+                                    value={data.immediate_consequences}
+                                    onChange={(e) => setData('immediate_consequences', e.target.value)}
+                                    placeholder="What happened right after"
+                                />
+                                {errors.immediate_consequences && (
+                                    <p className="text-sm text-destructive mt-1">{errors.immediate_consequences}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="longer_term_consequences">What could the longer-term consequences be?</Label>
+                                <Textarea
+                                    id="longer_term_consequences"
+                                    value={data.longer_term_consequences}
+                                    onChange={(e) => setData('longer_term_consequences', e.target.value)}
+                                    placeholder="Potential future impacts"
+                                />
+                                {errors.longer_term_consequences && (
+                                    <p className="text-sm text-destructive mt-1">{errors.longer_term_consequences}</p>
+                                )}
+                            </div>
+
+                            <div>
+                                <Label htmlFor="impact_significance">
+                                    Impact Significance (1-10)
+                                </Label>
+                                <p className="text-xs text-muted-foreground mb-2">
+                                    1 = Minimal impact • 10 = Severe, far-reaching impact
+                                </p>
+                                <Input
+                                    id="impact_significance"
+                                    type="number"
+                                    min="1"
+                                    max="10"
+                                    value={data.impact_significance}
+                                    onChange={(e) => setData('impact_significance', parseInt(e.target.value))}
+                                />
+                                {errors.impact_significance && (
+                                    <p className="text-sm text-destructive mt-1">{errors.impact_significance}</p>
                                 )}
                             </div>
                         </CardContent>
