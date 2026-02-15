@@ -8,9 +8,7 @@ from app.label import Label
 
 
 QUIZ_QUESTIONS: list[QuizQuestion] = [
-    # ──────────────────────────────────────────
-    # EMOTIONAL MASTERY (4 questions)
-    # ──────────────────────────────────────────
+    # EMOTIONAL MASTERY
     QuizQuestion(
         question_id="em_1",
         label=Label.EMOTIONAL_MASTERY,
@@ -45,9 +43,7 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         inverted=False,
     ),
 
-    # ──────────────────────────────────────────
-    # COGNITIVE CLARITY (4 questions)
-    # ──────────────────────────────────────────
+    # COGNITIVE CLARITY
     QuizQuestion(
         question_id="cc_1",
         label=Label.COGNITIVE_CLARITY,
@@ -82,9 +78,7 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         inverted=True,
     ),
 
-    # ──────────────────────────────────────────
-    # SOCIAL & RELATIONAL (4 questions)
-    # ──────────────────────────────────────────
+    # SOCIAL & RELATIONAL
     QuizQuestion(
         question_id="sr_1",
         label=Label.SOCIAL_RELATIONAL,
@@ -119,9 +113,7 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         inverted=False,
     ),
 
-    # ──────────────────────────────────────────
-    # ETHICAL & MORAL (4 questions)
-    # ──────────────────────────────────────────
+    # ETHICAL & MORAL
     QuizQuestion(
         question_id="etm_1",
         label=Label.ETHICAL_MORAL,
@@ -156,9 +148,7 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         inverted=True,
     ),
 
-    # ──────────────────────────────────────────
     # PHYSICAL & LIFESTYLE (4 questions)
-    # ──────────────────────────────────────────
     QuizQuestion(
         question_id="pl_1",
         label=Label.PHYSICAL_LIFESTYLE,
@@ -193,9 +183,7 @@ QUIZ_QUESTIONS: list[QuizQuestion] = [
         inverted=False,
     ),
 
-    # ──────────────────────────────────────────
-    # IDENTITY & GROWTH (4 questions)
-    # ──────────────────────────────────────────
+    # IDENTITY & GROWTH
     QuizQuestion(
         question_id="ig_1",
         label=Label.IDENTITY_GROWTH,

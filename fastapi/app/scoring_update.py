@@ -35,10 +35,6 @@ LABEL_TO_SUBLABEL_ENUM: dict[Label, type[SubLabelBase]] = {
     Label.IDENTITY_GROWTH: IdentityGrowth,
 }
 
-
-# ──────────────────────────────────────────────
-# HELPERS
-# ──────────────────────────────────────────────
 def _clamp(value: float) -> float:
     return max(MIN_SCORE, min(MAX_SCORE, value))
 
@@ -55,7 +51,7 @@ def _compute_overall_score(user: UserScores) -> float:
     Single number representing the user's state across all 78 sub-labels.
     Severity-weighted average of every sub-label score.
 
-    Formula: Σ(score_i × severity_i) / Σ(severity_i)
+    Formula: Sumation(score_i × severity_i) / Sumation(severity_i)
     """
     weighted_sum = 0.0
     total_weight = 0.0
@@ -70,9 +66,6 @@ def _compute_overall_score(user: UserScores) -> float:
     return round(weighted_sum / total_weight, 2) if total_weight > 0 else DEFAULT_SCORE
 
 
-# ══════════════════════════════════════════════
-# 1. QUIZ INITIALIZATION
-# ══════════════════════════════════════════════
 def initialize_from_quiz(
     user: UserScores,
     questions: list[QuizQuestion],
@@ -90,7 +83,7 @@ def initialize_from_quiz(
     Args:
         user: Fresh UserScores instance.
         questions: The 24 quiz questions.
-        answers: Map of question_id → answer (0-based index for scenarios, 1-5 for scales).
+        answers: Map of question_id -> answer (0-based index for scenarios, 1-5 for scales).
 
     Returns:
         Updated UserScores with initial label scores and first line chart point.
@@ -133,10 +126,6 @@ def initialize_from_quiz(
 
     return user
 
-
-# ══════════════════════════════════════════════
-# 2. UPDATE SUB-LABEL SCORE (LINE CHART)
-# ══════════════════════════════════════════════
 def update_sublabel_from_ai(
     user: UserScores,
     analysis: AIAnalysisResult,
@@ -188,10 +177,6 @@ def update_sublabel_from_ai(
 
     return user
 
-
-# ══════════════════════════════════════════════
-# 3. UPDATE LABEL SCORE (SPIDER CHART)
-# ══════════════════════════════════════════════
 def update_label_from_ai(
     user: UserScores,
     label: Label,
@@ -200,7 +185,7 @@ def update_label_from_ai(
     Recalculates a single label's spider chart score from its sub-label scores.
 
     Formula:
-        label_score = Σ(sublabel_score_i × severity_i) / Σ(severity_i)
+        label_score = Sumation(sublabel_score_i × severity_i) / Sumation(severity_i)
 
     High-severity sub-labels have more pull on the label score. Sub-labels that
     haven't been directly assessed yet fall back to the quiz baseline.
@@ -230,18 +215,14 @@ def update_label_from_ai(
 
     return user
 
-
-# ══════════════════════════════════════════════
-# CONVENIENCE: FULL UPDATE PIPELINE
-# ══════════════════════════════════════════════
 def process_ai_analysis(
     user: UserScores,
     analysis: AIAnalysisResult,
 ) -> UserScores:
     """
     Single entry point that does both updates in order:
-      1. Updates the sub-label score → new line chart point
-      2. Recalculates the parent label score → spider chart update
+      1. Updates the sub-label score -> new line chart point
+      2. Recalculates the parent label score -> spider chart update
 
     Use this instead of calling update_sublabel_from_ai + update_label_from_ai separately.
     """
@@ -249,10 +230,6 @@ def process_ai_analysis(
     user = update_label_from_ai(user, analysis.sublabel.label)
     return user
 
-
-# ══════════════════════════════════════════════
-# GETTERS FOR FRONTEND
-# ══════════════════════════════════════════════
 def get_spider_chart_data(user: UserScores) -> dict[str, float]:
     """Returns {label_name: score} for rendering the spider chart."""
     return {label.value: score for label, score in user.label_scores.items()}
