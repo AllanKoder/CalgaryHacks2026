@@ -2,29 +2,30 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from app.label import (
-    Label,
-    SubLabelBase,
-    EmotionalMastery,
-    CognitiveClarity,
-    SocialRelational,
-    EthicalMoral,
-    PhysicalLifestyle,
-    IdentityGrowth,
+from app.constants import (
+    BASE_PENALTY,
+    BASE_REWARD,
+    DEFAULT_SCORE,
+    MAX_SCORE,
+    MIN_SCORE,
+    SEVERITY_MULTIPLIER,
 )
 from app.data.quiz import QuizQuestion, QuizQuestionType
 from app.data.user_score import AIAnalysisResult, LineChartPoint, UserScores
-
-
-from app.constants import (
-    MIN_SCORE,
-    MAX_SCORE,
-    DEFAULT_SCORE,
-    BASE_PENALTY,
-    BASE_REWARD,
-    SEVERITY_MULTIPLIER,
+from app.label import (
+    CognitiveClarity,
+    EmotionalMastery,
+    EthicalMoral,
+    IdentityGrowth,
+    Label,
+    PhysicalLifestyle,
+    SocialRelational,
+    SubLabelBase,
 )
-
+from app.services.ai_service import (
+    generate_quiz_analysis as generate_quiz_analysis_ai_service,
+)
+from app.services.ai_service import llm as LLM_ai_service
 
 LABEL_TO_SUBLABEL_ENUM: dict[Label, type[SubLabelBase]] = {
     Label.EMOTIONAL_MASTERY: EmotionalMastery,
@@ -34,6 +35,7 @@ LABEL_TO_SUBLABEL_ENUM: dict[Label, type[SubLabelBase]] = {
     Label.PHYSICAL_LIFESTYLE: PhysicalLifestyle,
     Label.IDENTITY_GROWTH: IdentityGrowth,
 }
+
 
 def _clamp(value: float) -> float:
     return max(MIN_SCORE, min(MAX_SCORE, value))
@@ -66,65 +68,64 @@ def _compute_overall_score(user: UserScores) -> float:
     return round(weighted_sum / total_weight, 2) if total_weight > 0 else DEFAULT_SCORE
 
 
-def initialize_from_quiz(
+async def initialize_from_quiz(
     user: UserScores,
     questions: list[QuizQuestion],
     answers: dict[str, int],
 ) -> UserScores:
-    """
-    Called once on first login after the user completes the 24-question quiz.
-
-    - Converts 24 answers into 6 label scores (4 questions per label, averaged).
-    - Sets the spider chart baseline.
-    - Records the first line chart data point (delta = 0 since it's the starting point).
-    - Sub-label scores remain unset — they inherit the parent label score until
-      the AI classifies specific events.
-
-    Args:
-        user: Fresh UserScores instance.
-        questions: The 24 quiz questions.
-        answers: Map of question_id -> answer (0-based index for scenarios, 1-5 for scales).
-
-    Returns:
-        Updated UserScores with initial label scores and first line chart point.
-    """
+    """ """
+    # 1. Group scores by Label (Category)
+    # We create a list of scores for each of the 6 labels
     label_buckets: dict[Label, list[float]] = {label: [] for label in Label}
 
     for question in questions:
         if question.question_id not in answers:
             continue
 
-        answer = answers[question.question_id]
+        answer_value = answers[question.question_id]
 
+        # Calculate score (0-100 scale)
         if question.question_type == QuizQuestionType.SCENARIO:
-            if question.options is None:
-                raise ValueError(f"Scenario question {question.question_id} has no options")
-            score = question.options[answer][1]
-
+            # For scenarios, the score is explicitly defined in the options tuple
+            # question.options[index] -> ("text", score)
+            score = question.options[answer_value][1]
         else:
-            # AGREE_DISAGREE or SELF_RATING: answer is 1-5
+            # For AGREE_DISAGREE / SELF_RATING (1-5 scale)
+            # Normalize 1-5 to 0-100
             if question.inverted:
-                score = (5 - answer) / 4 * 100
+                score = (5 - answer_value) / 4 * 100
             else:
-                score = (answer - 1) / 4 * 100
+                score = (answer_value - 1) / 4 * 100
 
         label_buckets[question.label].append(score)
 
-    # Average per label
+    # 2. Update Spider Chart Data (label_scores)
+    # We average the 4 questions for each label
     for label, scores in label_buckets.items():
-        user.label_scores[label] = round(
-            sum(scores) / len(scores) if scores else DEFAULT_SCORE, 1
-        )
+        if scores:
+            user.label_scores[label] = round(sum(scores) / len(scores), 1)
+        else:
+            user.label_scores[label] = DEFAULT_SCORE
 
-    # First line chart point — baseline, delta is 0
-    overall = _compute_overall_score(user)
-    user.line_chart_history.append(LineChartPoint(
-        timestamp=datetime.now(timezone.utc),
-        overall_score=overall,
-        delta=0.0,
-    ))
+    # 3. Generate the Gemini Report
+    # We do this before the line chart so the user gets everything at once
+    user.initial_report = await generate_quiz_analysis_ai_service(questions, answers)
+
+    # 4. Update Line Graph Data (line_chart_history)
+    # _compute_overall_score uses the label_scores we just calculated
+    # to create the first data point on the graph.
+    initial_overall_score = _compute_overall_score(user)
+
+    user.line_chart_history.append(
+        LineChartPoint(
+            timestamp=datetime.now(timezone.utc),
+            overall_score=initial_overall_score,
+            delta=0.0,  # First point has no change
+        )
+    )
 
     return user
+
 
 def update_sublabel_from_ai(
     user: UserScores,
@@ -169,13 +170,16 @@ def update_sublabel_from_ai(
     new_overall = _compute_overall_score(user)
     delta = round(new_overall - previous_overall, 2)
 
-    user.line_chart_history.append(LineChartPoint(
-        timestamp=datetime.now(timezone.utc),
-        overall_score=new_overall,
-        delta=delta,
-    ))
+    user.line_chart_history.append(
+        LineChartPoint(
+            timestamp=datetime.now(timezone.utc),
+            overall_score=new_overall,
+            delta=delta,
+        )
+    )
 
     return user
+
 
 def update_label_from_ai(
     user: UserScores,
@@ -215,6 +219,7 @@ def update_label_from_ai(
 
     return user
 
+
 def process_ai_analysis(
     user: UserScores,
     analysis: AIAnalysisResult,
@@ -229,6 +234,7 @@ def process_ai_analysis(
     user = update_sublabel_from_ai(user, analysis)
     user = update_label_from_ai(user, analysis.sublabel.label)
     return user
+
 
 def get_spider_chart_data(user: UserScores) -> dict[str, float]:
     """Returns {label_name: score} for rendering the spider chart."""
