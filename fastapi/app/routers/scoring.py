@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from app.questions import QUIZ_QUESTIONS
-from fastapi.app.scoring_update import initialize_from_quiz, process_ai_analysis, LABEL_TO_SUBLABEL_ENUM
+from app.scoring_update import initialize_from_quiz, process_ai_analysis, LABEL_TO_SUBLABEL_ENUM
 from app.data.user_score import UserScores, AIAnalysisResult, LineChartPoint
 from app.label import Label, SubLabelBase
 
