@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { dashboard, eventsIndex, eventsCreate, eventsShow } from '@/routes';
+import { dashboard, eventsIndex, eventsCreate, eventsShow } from '@/route-helpers';
 
 interface Event {
     id: number;

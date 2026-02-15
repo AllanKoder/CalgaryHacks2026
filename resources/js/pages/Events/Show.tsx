@@ -4,7 +4,7 @@ import type { BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { dashboard, eventsIndex, eventsEdit, eventsDestroy, eventsIdentificationCreate, eventsIdentificationEdit, eventsLearningCreate, eventsLearningEdit } from '@/routes';
+import { dashboard, eventsIndex, eventsEdit, eventsDestroy, eventsIdentificationCreate, eventsIdentificationEdit, eventsLearningCreate, eventsLearningEdit } from '@/route-helpers';
 
 interface Event {
     id: number;

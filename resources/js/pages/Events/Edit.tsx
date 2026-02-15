@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { dashboard, eventsIndex, eventsUpdate } from '@/routes';
+import { dashboard, eventsIndex, eventsUpdate } from '@/route-helpers';
 
 interface Event {
     id: number;

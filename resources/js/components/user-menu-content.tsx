@@ -9,7 +9,7 @@ import {
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import type { User } from '@/types';
-import { logout } from '@/routes';
+import { logout } from '@/route-helpers';
 import { edit } from '@/routes/profile';
 
 type Props = {
